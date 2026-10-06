@@ -1,0 +1,204 @@
+<title>Robot Toy Concepts</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,600;12..96,800&family=Atkinson+Hyperlegible:wght@400;700&family=JetBrains+Mono:wght@400;600&display=swap">
+<style>
+/* Layout: workshop spec sheet. Recommendation up top, then one wide block per concept (renders left, specs right), then shared parts. */
+:root {
+  --bg: #f6f4f0;
+  --panel: #ffffff;
+  --fg: #1d2330;
+  --muted: #5b6273;
+  --line: #dcd8d0;
+  --orange: #e8890c;
+  --blue: #2a6fd6;
+  --pick-bg: #fff3e0;
+  --ok: #2f8a4e;
+  --warn: #b5541c;
+  --render-bg: #f8f8f8;
+  --display: "Bricolage Grotesque", "Arial Rounded MT Bold", system-ui, sans-serif;
+  --body: "Atkinson Hyperlegible", system-ui, -apple-system, sans-serif;
+  --mono: "JetBrains Mono", ui-monospace, Menlo, monospace;
+}
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    --bg: #15181f; --panel: #1d212b; --fg: #eceae5; --muted: #a3a8b5; --line: #323848;
+    --orange: #ffa63d; --blue: #6ea2ff; --pick-bg: #2c2216; --ok: #5cc483; --warn: #f08a55; --render-bg: #f8f8f8;
+    color-scheme: dark;
+  }
+}
+:root[data-theme="dark"] {
+  --bg: #15181f; --panel: #1d212b; --fg: #eceae5; --muted: #a3a8b5; --line: #323848;
+  --orange: #ffa63d; --blue: #6ea2ff; --pick-bg: #2c2216; --ok: #5cc483; --warn: #f08a55; --render-bg: #f8f8f8;
+  color-scheme: dark;
+}
+body { background: var(--bg); color: var(--fg); font-family: var(--body); font-size: 16px; line-height: 1.55; padding-inline: 16px; padding-block: 0 48px; }
+.wrap { max-width: 1120px; margin: 0 auto; display: grid; gap: 40px; }
+h1, h2, h3 { font-family: var(--display); text-wrap: balance; margin: 0; line-height: 1.1; }
+h1 { font-size: clamp(2rem, 5vw, 3.2rem); font-weight: 800; }
+h2 { font-size: clamp(1.5rem, 3.4vw, 2.1rem); font-weight: 800; }
+h3 { font-size: 1.05rem; font-weight: 600; }
+p { margin: 0; max-width: 68ch; }
+.eyebrow { font-family: var(--mono); font-size: .75rem; letter-spacing: .12em; text-transform: uppercase; color: var(--muted); }
+header { padding-top: 40px; display: grid; gap: 12px; }
+header p { color: var(--muted); font-size: 1.08rem; }
+
+.verdict { background: var(--pick-bg); border: 2px solid var(--orange); border-radius: 14px; padding: 20px 22px; display: grid; gap: 8px; }
+.verdict strong { color: var(--orange); }
+
+.concept { display: grid; gap: 18px; padding-top: 28px; border-top: 1px solid var(--line); }
+.concept-head { display: flex; flex-wrap: wrap; align-items: baseline; gap: 10px 16px; }
+.tag { font-family: var(--mono); font-size: .75rem; padding: 3px 10px; border-radius: 999px; border: 1px solid var(--line); color: var(--muted); }
+.tag.pick { border-color: var(--orange); color: var(--orange); font-weight: 600; }
+.concept-body { display: grid; grid-template-columns: minmax(0, 1.25fr) minmax(0, 1fr); gap: 24px; align-items: start; }
+@media (max-width: 820px) { .concept-body { grid-template-columns: 1fr; } }
+.shots { display: grid; grid-template-columns: 1fr; gap: 10px; }
+.shots img { width: 100%; height: auto; border-radius: 12px; background: var(--render-bg); border: 1px solid var(--line); display: block; }
+.shots .small { display: grid; grid-template-columns: 1fr; }
+.info { display: grid; gap: 16px; min-width: 0; }
+dl.spec { display: grid; grid-template-columns: max-content 1fr; gap: 6px 14px; margin: 0; font-size: .95rem; }
+dl.spec dt { font-family: var(--mono); font-size: .78rem; color: var(--muted); padding-top: 3px; }
+dl.spec dd { margin: 0; }
+ul { margin: 0; padding-left: 1.1em; display: grid; gap: 4px; }
+.pros li::marker { content: "+  "; color: var(--ok); font-weight: 700; }
+.cons li::marker { content: "–  "; color: var(--warn); font-weight: 700; }
+
+.table-wrap { overflow-x: auto; border: 1px solid var(--line); border-radius: 12px; background: var(--panel); }
+table { border-collapse: collapse; width: 100%; min-width: 640px; font-size: .93rem; }
+th, td { text-align: left; padding: 10px 14px; border-bottom: 1px solid var(--line); vertical-align: top; }
+th { font-family: var(--mono); font-size: .74rem; letter-spacing: .06em; text-transform: uppercase; color: var(--muted); font-weight: 600; }
+tr:last-child td { border-bottom: 0; }
+td.num { font-variant-numeric: tabular-nums; font-family: var(--mono); font-size: .85rem; }
+.yes { color: var(--ok); font-weight: 700; }
+.new { color: var(--warn); font-weight: 700; }
+section { display: grid; gap: 16px; }
+.grid2 { display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 20px; }
+.note { color: var(--muted); font-size: .9rem; }
+code { font-family: var(--mono); font-size: .85em; }
+</style>
+
+<div class="wrap">
+  <header>
+    <span class="eyebrow">Arduino robot toy · concept round 1</span>
+    <h1>Three tough robots to choose from</h1>
+    <p>Each concept drives on the floor, has arms on top, two programmable LED eyes and an 8×8 LED matrix mouth, and runs on the Otto Nano board, servos, ultrasonic sensor, matrix and buzzer you already have. Renders are to scale (millimetres) from OpenSCAD.</p>
+  </header>
+
+  <div class="verdict">
+    <span class="eyebrow">Recommendation</span>
+    <p><strong>Concept B, "Brick".</strong> Rubber-tyred wheels tucked under fenders and a wrap-around rubber bumper survive drops, wall crashes and being ridden on far better than printed tracks, and the carry handle doubles as a roll bar. It reuses the most Otto parts and needs the fewest new ones. The Tank looks great but printed tracks can throw a link or jam with carpet fluff, which is the kind of failure that ends play for a kid.</p>
+  </div>
+
+  <!-- Concept A -->
+  <article class="concept" id="tank">
+    <div class="concept-head">
+      <h2>A · Tank</h2>
+      <span class="tag">tracks</span><span class="tag">2 arms × 2 joints</span><span class="tag">turning head</span>
+    </div>
+    <div class="concept-body">
+      <div class="shots">
+        <img src="renders/a_tank_34.png" alt="Tank concept: orange robot on blue and black tracks with a square head showing two LED-matrix eyes and a smiling matrix mouth, ultrasonic sensor in the chest, two arms with claws">
+        <img src="renders/a_tank_side.png" alt="Tank concept from the right side">
+      </div>
+      <div class="info">
+        <p>A classic tracked robot with a square head that turns left and right. Both arms have a shoulder and an elbow and end in fixed claws, so it can push, scoop and wave.</p>
+        <dl class="spec">
+          <dt>Size</dt><dd>about 180 × 185 × 265 mm tall (with antenna)</dd>
+          <dt>Drive</dt><dd>2 gear motors, TPU tracks with grousers</dd>
+          <dt>Servos</dt><dd>5: shoulder + elbow per arm, head pan</dd>
+          <dt>Eyes</dt><dd>two more 8×8 matrices chained to the mouth</dd>
+          <dt>Sensor</dt><dd>HC-SR04 in the chest behind a guard</dd>
+        </dl>
+        <ul class="pros"><li>Climbs over toys and rugs</li><li>Most "robot" looking, the head turn is very expressive</li></ul>
+        <ul class="cons"><li>Printed tracks are the most failure-prone part of all three designs</li><li>Tall, so it is the one most likely to tip on a hard turn</li><li>Longest print and assembly</li></ul>
+      </div>
+    </div>
+  </article>
+
+  <!-- Concept B -->
+  <article class="concept" id="brick">
+    <div class="concept-head">
+      <h2>B · Brick</h2>
+      <span class="tag pick">recommended</span><span class="tag">4WD</span><span class="tag">2 arms with grippers</span><span class="tag">carry handle</span>
+    </div>
+    <div class="concept-body">
+      <div class="shots">
+        <img src="renders/b_brick_34.png" alt="Brick concept: rounded orange block body on a blue chassis with four chunky black tyres under orange fenders, a black rubber bumper all around, LED-matrix face behind a window, two arms with blue grippers and a black carry handle on top">
+        <img src="renders/b_brick_side.png" alt="Brick concept from the right side">
+      </div>
+      <div class="info">
+        <p>One big rounded block for head and body, low and wide on four skid-steer wheels. The whole face (two eye matrices and the mouth) sits behind one clear window, and the handle on top lets your kid carry it around.</p>
+        <dl class="spec">
+          <dt>Size</dt><dd>about 190 × 250 × 205 mm tall</dd>
+          <dt>Drive</dt><dd>4 gear motors (or 2 driven + 2 idlers), TPU tyres</dd>
+          <dt>Servos</dt><dd>2 to 4: shoulder per arm, optional gripper per arm</dd>
+          <dt>Eyes</dt><dd>two more 8×8 matrices chained to the mouth</dd>
+          <dt>Sensor</dt><dd>HC-SR04 in the front grille, behind the bumper</dd>
+        </dl>
+        <ul class="pros"><li>Toughest: bumper and fenders take every hit before the body does</li><li>Low centre of gravity, very hard to flip</li><li>Simplest to print and to repair</li></ul>
+        <ul class="cons"><li>No head turn (could add one later as a neck servo)</li><li>Arms are simpler than the Tank's</li></ul>
+      </div>
+    </div>
+  </article>
+
+  <!-- Concept C -->
+  <article class="concept" id="digger">
+    <div class="concept-head">
+      <h2>C · Digger</h2>
+      <span class="tag">2 big wheels</span><span class="tag">1 claw arm × 3 joints</span><span class="tag">rotating turret</span>
+    </div>
+    <div class="concept-body">
+      <div class="shots">
+        <img src="renders/c_digger_34.png" alt="Digger concept: two large black wheels on a rounded orange pod, a rotating turret head with ultrasonic sensor eyes ringed by blue LED rings, an LED-matrix mouth, and one long jointed arm with a claw">
+        <img src="renders/c_digger_side.png" alt="Digger concept from the right side">
+      </div>
+      <div class="info">
+        <p>Two big wheels taller than the body plus a rear skid, with a turret on top carrying one long excavator-style arm. The ultrasonic sensor becomes the eyes, like Otto, ringed with colour LED rings.</p>
+        <dl class="spec">
+          <dt>Size</dt><dd>about 165 × 160 × 230 mm tall (arm raised)</dd>
+          <dt>Drive</dt><dd>2 gear motors, 104 mm TPU tyres, rear skid</dd>
+          <dt>Servos</dt><dd>4: turret, shoulder, elbow, claw</dd>
+          <dt>Eyes</dt><dd>2 × WS2812 12-LED rings around the HC-SR04</dd>
+          <dt>Sensor</dt><dd>HC-SR04 as the eyes</dd>
+        </dl>
+        <ul class="pros"><li>The arm can actually pick things up</li><li>Big wheels roll over obstacles and protect the body</li><li>Familiar Otto face</li></ul>
+        <ul class="cons"><li>One long arm is a lever: it is the part most likely to get yanked</li><li>Needs new LED rings for the eyes</li><li>Turns in place but the skid drags on carpet</li></ul>
+      </div>
+    </div>
+  </article>
+
+  <section id="parts">
+    <h2>Parts: what you have vs. what's new</h2>
+    <p class="note">Otto "fat version" kit parts are from its Printables bill of materials. I couldn't open the Amazon listing, so I've assumed it is the common MAX7219 8×8 module (32 × 32 mm, 5-pin); tell me if it's different.</p>
+    <div class="table-wrap">
+      <table>
+        <thead><tr><th>Part</th><th>A · Tank</th><th>B · Brick</th><th>C · Digger</th><th>Source</th></tr></thead>
+        <tbody>
+          <tr><td>Otto Nano board + I/O shield</td><td class="num">1</td><td class="num">1</td><td class="num">1</td><td class="yes">Otto kit</td></tr>
+          <tr><td>Micro servos (SG90 or MG90S)</td><td class="num">5</td><td class="num">2–4</td><td class="num">4</td><td class="yes">Otto kit (has 6)</td></tr>
+          <tr><td>HC-SR04 ultrasonic</td><td class="num">1</td><td class="num">1</td><td class="num">1</td><td class="yes">Otto kit</td></tr>
+          <tr><td>MAX7219 8×8 matrix (mouth)</td><td class="num">1</td><td class="num">1</td><td class="num">1</td><td class="yes">Otto kit / your Amazon pack</td></tr>
+          <tr><td>MAX7219 8×8 matrix (eyes)</td><td class="num">2</td><td class="num">2</td><td class="num">–</td><td class="yes">Your Amazon pack, if it's a multi-pack</td></tr>
+          <tr><td>Buzzer, Dupont cables</td><td class="num">✓</td><td class="num">✓</td><td class="num">✓</td><td class="yes">Otto kit</td></tr>
+          <tr><td>Gear motors (metal-gear N20 or TT)</td><td class="num">2</td><td class="num">2–4</td><td class="num">2</td><td class="new">New</td></tr>
+          <tr><td>Motor driver (DRV8833 or TB6612)</td><td class="num">1</td><td class="num">1–2</td><td class="num">1</td><td class="new">New</td></tr>
+          <tr><td>WS2812 12-LED rings</td><td class="num">–</td><td class="num">–</td><td class="num">2</td><td class="new">New</td></tr>
+          <tr><td>2 × 18650 holder + 5 V 3 A buck + switch</td><td class="num">1</td><td class="num">1</td><td class="num">1</td><td class="new">New (the Otto battery can't run drive motors and servos together)</td></tr>
+          <tr><td>TPU filament (tyres, tracks, bumpers)</td><td class="num">most</td><td class="num">some</td><td class="num">some</td><td class="new">New</td></tr>
+        </tbody>
+      </table>
+    </div>
+    <p class="note">Pin budget fits the Nano in every concept: all three matrices share one 3-wire chain, the motor driver takes 4 PWM pins (3, 5, 6, 11), the HC-SR04 2 pins, the buzzer 1, and servos go on the remaining pins. Otto's Bluetooth module would still fit for phone control.</p>
+  </section>
+
+  <section id="tough">
+    <h2>How it stays in one piece</h2>
+    <div class="grid2">
+      <div><h3>Arms that give way</h3><p>Each arm attaches to its servo through a magnetic or spring-detent coupler, so a yank pops the arm off instead of stripping the servo gears. Arms get metal-gear MG90S servos, which are drop-in replacements for the SG90.</p></div>
+      <div><h3>Soft outside, hard inside</h3><p>Tyres, tracks, bumpers and the handle are TPU. The shell is PETG with 4 walls and 30% gyroid infill, not PLA, which goes brittle and cracks on drops.</p></div>
+      <div><h3>Protected screens</h3><p>The matrices sit recessed behind a 2 mm polycarbonate or PETG window, so little fingers and crashes never touch the LEDs.</p></div>
+      <div><h3>Floating electronics</h3><p>The Nano, driver and buck converter sit on one tray on foam pads, with heat-set brass inserts instead of screws threaded into plastic, so it can be opened and fixed many times.</p></div>
+      <div><h3>Kid-safe power</h3><p>Lithium cells live behind a screwed battery door with a protected charger. Any magnets are fully enclosed inside printed parts; for a child under about 6 I'd use the spring detent instead of magnets.</p></div>
+      <div><h3>Programmable</h3><p>Standard Arduino IDE (and Otto Blockly-style blocks later), with a small library of moves, faces and sounds so new tricks are a few lines of code.</p></div>
+    </div>
+  </section>
+</div>
