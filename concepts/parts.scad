@@ -136,3 +136,35 @@ module mag_joint(d = 26) {
     color(C_GREY) cylinder(d = d, h = 4, center = true);
     for (i = [0:3]) rotate(i * 90 + 45) translate([d / 2 - 5, 0, 2]) color(C_SILVER) cylinder(d = 6, h = 1);
 }
+
+// 2 x 2 MAX7219 8x8 modules = one 16 x 16 display (64 x 64 mm).
+// pattern: 16 strings of 16 chars, "#" = lit.
+module matrix16x16(pattern) {
+    for (tr = [0, 1], tc = [0, 1]) {
+        color(C_PCB) translate([-32 + tc * 32, 32 - (tr + 1) * 32, -2]) cube([31.6, 31.6, 2]);
+        color(C_DARK) translate([-32 + tc * 32, 32 - (tr + 1) * 32, 0]) cube([31.6, 31.6, 1.2]);
+    }
+    for (r = [0:15], c = [0:15]) {
+        lit = pattern[r][c] == "#";
+        color(lit ? C_LED : C_LEDOFF)
+            translate([-30 + c * 4, 30 - r * 4, 1.2]) cylinder(d = 2.8, h = lit ? 1.0 : 0.4, $fn = 12);
+    }
+}
+
+FACE16 = [
+    "................",
+    "..####....####..",
+    ".######..######.",
+    ".##..##..##..##.",
+    ".##..##..##..##.",
+    ".######..######.",
+    "..####....####..",
+    "................",
+    "................",
+    "................",
+    ".#............#.",
+    ".##..........##.",
+    "..###......###..",
+    "...##########...",
+    ".....######.....",
+    "................"];
