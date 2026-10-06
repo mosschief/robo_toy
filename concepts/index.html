@@ -78,15 +78,72 @@ code { font-family: var(--mono); font-size: .85em; }
 
 <div class="wrap">
   <header>
-    <span class="eyebrow">Arduino robot toy · concept round 1</span>
-    <h1>Three tough robots to choose from</h1>
-    <p>Each concept drives on the floor, has arms on top, two programmable LED eyes and an 8×8 LED matrix mouth, and runs on the Otto Nano board, servos, ultrasonic sensor, matrix and buzzer you already have. Renders are to scale (millimetres) from OpenSCAD.</p>
+    <span class="eyebrow">Arduino robot toy · round 2</span>
+    <h1>Tank, revision 2</h1>
+    <p>You picked the Tank. This revision drives on a bought tank chassis instead of printed tracks, and swaps the ultrasonic sensor for a cheap Wi-Fi camera in the forehead. Renders are to scale (millimetres) from OpenSCAD; round 1 is further down for reference.</p>
   </header>
 
-  <div class="verdict">
-    <span class="eyebrow">Recommendation</span>
-    <p><strong>Concept B, "Brick".</strong> Rubber-tyred wheels tucked under fenders and a wrap-around rubber bumper survive drops, wall crashes and being ridden on far better than printed tracks, and the carry handle doubles as a roll bar. It reuses the most Otto parts and needs the fewest new ones. The Tank looks great but printed tracks can throw a link or jam with carpet fluff, which is the kind of failure that ends play for a kid.</p>
-  </div>
+  <article class="concept" id="tank-v2">
+    <div class="concept-head">
+      <h2>Tank v2</h2>
+      <span class="tag pick">chosen</span><span class="tag">bought track chassis</span><span class="tag">ESP32-CAM</span><span class="tag">2 arms × 2 joints</span>
+    </div>
+    <div class="concept-body">
+      <div class="shots">
+        <img src="renders/tank_v2_34.png" alt="Tank v2: orange robot on a bought tank chassis with black tracks, rubber bumpers front and back, a head with a camera lens in the forehead above two LED-matrix eyes and a matrix mouth, and two arms with claws">
+        <img src="renders/tank_v2_side.png" alt="Tank v2 from the right side, showing the track chassis with road wheels under the printed body">
+      </div>
+      <div class="info">
+        <dl class="spec">
+          <dt>Size</dt><dd>about 172 × 222 × 280 mm tall (310 with antenna)</dd>
+          <dt>Drive</dt><dd>bought mini aluminium tank chassis, about 193 × 163 × 60 mm, metal-gear motors, plastic link tracks</dd>
+          <dt>Camera</dt><dd>ESP32-CAM (OV2640) in the forehead behind a clear cover; the head-turn servo pans it</dd>
+          <dt>Servos</dt><dd>5: shoulder + elbow per arm, head pan</dd>
+          <dt>Face</dt><dd>2 × 8×8 eyes + 8×8 mouth, one MAX7219 chain</dd>
+          <dt>Chest</dt><dd>speaker grille for the buzzer, power button on the shoulder</dd>
+        </dl>
+        <h3>What the camera adds</h3>
+        <ul class="pros"><li>Live video to a phone or tablet over Wi-Fi, with on-screen driving buttons, so your kid sees what the robot sees</li><li>Simple vision tricks on the ESP32: follow a coloured ball, react when a face appears</li></ul>
+        <h3>Trade-offs</h3>
+        <ul class="cons"><li>The camera can't measure distance, so automatic "stop before the wall" goes away unless we add a tiny VL53L0X distance sensor (about $3) next to the lens</li><li>Taller than round 1 because the camera needs forehead space; the heavy parts (battery, motors) stay low in the chassis to keep it from tipping</li></ul>
+      </div>
+    </div>
+  </article>
+
+  <section id="v2-arch">
+    <h2>How the electronics split</h2>
+    <div class="grid2">
+      <div><h3>ESP32-CAM: eyes and Wi-Fi</h3><p>Runs the camera, the phone web page and any vision code. It sends short commands like "drive forward" or "happy face" to the Nano over a serial link (two wires, plus a two-resistor divider because the ESP32 is 3.3 V).</p></div>
+      <div><h3>Otto Nano: body</h3><p>Keeps doing what it does in Otto: servos, the three matrices, the buzzer, and now the motor driver. Programmed in the Arduino IDE exactly as before, so it still works on its own without the camera.</p></div>
+      <div><h3>Bought chassis</h3><p>The tracks, sprockets, road wheels and motors come as one tested unit. The printed body bolts to its aluminium deck with four M3 screws, and printed fenders cover the tracks so fingers stay out.</p></div>
+      <div><h3>Power</h3><p>2 × 18650 cells (7.4 V) in the chassis feed the motors through the driver, and a 5 V 3 A buck converter feeds the Nano, servos, matrices and camera.</p></div>
+    </div>
+  </section>
+
+  <section id="v2-parts">
+    <h2>Tank v2 parts list</h2>
+    <p class="note">Prices are typical Amazon/AliExpress prices in October 2026 and vary by seller.</p>
+    <div class="table-wrap">
+      <table>
+        <thead><tr><th>Part</th><th>Qty</th><th>Source</th><th>Approx. cost</th></tr></thead>
+        <tbody>
+          <tr><td>Otto Nano board + I/O shield</td><td class="num">1</td><td class="yes">Have</td><td class="num">–</td></tr>
+          <tr><td>Micro servos (MG90S metal gear recommended for the arms)</td><td class="num">5</td><td class="yes">Have SG90s</td><td class="num">$10 for 4 MG90S</td></tr>
+          <tr><td>MAX7219 8×8 matrix</td><td class="num">3</td><td class="yes">Have (Otto + Amazon pack)</td><td class="num">–</td></tr>
+          <tr><td>Buzzer, Dupont cables</td><td class="num">✓</td><td class="yes">Have</td><td class="num">–</td></tr>
+          <tr><td>Mini aluminium tank chassis with motors ("mini TP101" style)</td><td class="num">1</td><td class="new">New</td><td class="num">$35–65</td></tr>
+          <tr><td>ESP32-CAM (AI-Thinker, OV2640) + ESP32-CAM-MB USB adapter</td><td class="num">1</td><td class="new">New</td><td class="num">$8–12</td></tr>
+          <tr><td>Motor driver (TB6612FNG or DRV8833)</td><td class="num">1</td><td class="new">New</td><td class="num">$3</td></tr>
+          <tr><td>2 × 18650 holder with protection board + cells</td><td class="num">1</td><td class="new">New</td><td class="num">$12</td></tr>
+          <tr><td>5 V 3 A buck converter + rocker switch</td><td class="num">1</td><td class="new">New</td><td class="num">$4</td></tr>
+          <tr><td>VL53L0X distance sensor (optional)</td><td class="num">1</td><td class="new">New</td><td class="num">$3</td></tr>
+          <tr><td>PETG + TPU filament</td><td class="num">–</td><td class="new">New</td><td class="num">–</td></tr>
+        </tbody>
+      </table>
+    </div>
+  </section>
+
+  <h2 style="padding-top:12px">Round 1 concepts</h2>
 
   <!-- Concept A -->
   <article class="concept" id="tank">
