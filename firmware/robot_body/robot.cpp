@@ -63,23 +63,21 @@ void Robot::turnLeft(uint16_t ms, uint8_t speed)  { drive(-speed, speed);  wait(
 void Robot::turnRight(uint16_t ms, uint8_t speed) { drive(speed, -speed);  wait(ms); stop(); }
 
 void Robot::arms(int16_t left, int16_t right) { Joints::move(L_SHOULDER, left); Joints::move(R_SHOULDER, right); }
-void Robot::elbows(int16_t left, int16_t right) { Joints::move(L_ELBOW, left); Joints::move(R_ELBOW, right); }
-void Robot::look(int8_t dir) { Face::look(dir); }
+void Robot::waist(int16_t angle) { Joints::move(WAIST, angle); }
+void Robot::look(int8_t dir) { Face::look(dir); waist(90 - dir * 45); }
 
 void Robot::wave() {
-  Joints::move(R_SHOULDER, 160);
-  Joints::move(R_ELBOW, 40);
+  Joints::move(R_SHOULDER, 165);
   if (!waitMoves()) return;
   for (uint8_t i = 0; i < 3; i++) {
-    Joints::move(R_ELBOW, 90); if (!waitMoves()) return;
-    Joints::move(R_ELBOW, 30); if (!waitMoves()) return;
+    Joints::move(R_SHOULDER, 130); if (!waitMoves()) return;
+    Joints::move(R_SHOULDER, 170); if (!waitMoves()) return;
   }
   Joints::move(R_SHOULDER, JOINTS[R_SHOULDER].restAngle);
-  Joints::move(R_ELBOW, JOINTS[R_ELBOW].restAngle);
 }
 
-void Robot::armsUp() { arms(175, 175); elbows(20, 20); }
-void Robot::hug() { arms(95, 95); elbows(120, 120); }
+void Robot::armsUp() { arms(175, 175); }
+void Robot::hug() { arms(100, 100); }
 void Robot::rest() { Joints::rest(); }
 
 void Robot::face(Expression e) { Face::show(e); }

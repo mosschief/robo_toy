@@ -48,6 +48,8 @@ label{font-size:13px;color:var(--muted)}
     <div class="grid" id="poses"></div>
     <h3>Modes</h3>
     <div class="grid" id="modes"></div>
+    <h3>Turn body</h3>
+    <input type="range" id="waist" min="25" max="155" value="90" style="direction:rtl">
   </div>
 </div>
 <script>
@@ -61,6 +63,7 @@ buttons('sounds',['Beep','Hello','Yay','Aww','Wow','Uh oh','Dance'],'S');
 buttons('poses',['Rest','Arms up','Hug','Point','Ta-da','Wave'],'P');
 const MODES=['Play','Explore','Dance','My code','Face test'];
 buttons('modes',MODES,'M');
+$('waist').oninput=e=>send('J 2 '+e.target.value);
 let slow=true,guard=true,light=false;
 $('slow').onclick=e=>{slow=!slow;e.target.classList.toggle('on',slow);e.target.textContent=slow?'Slow':'Fast';};
 $('guard').onclick=e=>{guard=!guard;e.target.classList.toggle('on',guard);send('G '+(guard?1:0));};

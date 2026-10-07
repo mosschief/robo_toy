@@ -27,13 +27,24 @@ void begin() {
   lastUpdate = millis();
 }
 
+bool waistTurned() { return abs((int16_t)target[WAIST] - 90) > 15; }
+
 void move(Joint j, int16_t a) {
   if (j >= JOINT_COUNT) return;
   target[j] = constrain(a, JOINTS[j].minAngle, JOINTS[j].maxAngle);
+  // turned waist: the arms must stay up so they don't hit the lower body
+  if (waistTurned()) {
+    if (j == WAIST) {
+      if (target[L_SHOULDER] < ARMS_CLEAR_ANGLE) target[L_SHOULDER] = ARMS_CLEAR_ANGLE;
+      if (target[R_SHOULDER] < ARMS_CLEAR_ANGLE) target[R_SHOULDER] = ARMS_CLEAR_ANGLE;
+    } else if (target[j] < ARMS_CLEAR_ANGLE) {
+      target[j] = ARMS_CLEAR_ANGLE;
+    }
+  }
 }
 
-void moveAll(int16_t ls, int16_t le, int16_t rs, int16_t re) {
-  move(L_SHOULDER, ls); move(L_ELBOW, le); move(R_SHOULDER, rs); move(R_ELBOW, re);
+void moveAll(int16_t ls, int16_t rs, int16_t waist) {
+  move(L_SHOULDER, ls); move(R_SHOULDER, rs); move(WAIST, waist);
 }
 
 void rest() { for (uint8_t j = 0; j < JOINT_COUNT; j++) move((Joint)j, JOINTS[j].restAngle); }

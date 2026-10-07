@@ -23,7 +23,8 @@ const uint16_t REMOTE_TIMEOUT_MS = 400;    // stop if the phone goes quiet
 
 // ---------------- servos ----------------
 // Angles: shoulder 0 = arm straight down, 90 = pointing forward, 180 = straight up.
-// Elbow 0 = straight, 90 = bent forward. The head is fixed to the body.
+// Waist 90 = facing ahead, bigger = turned left. The elbows are a fixed bend.
+// D10 and A2 are free (they drove the elbows in an earlier design).
 // trim: degrees added so the joint matches the drawing at rest (calibrate once).
 struct JointConfig {
   uint8_t pin;
@@ -31,14 +32,15 @@ struct JointConfig {
   int8_t trim;
   uint8_t minAngle, maxAngle, restAngle;
 };
-enum Joint : uint8_t { L_SHOULDER, L_ELBOW, R_SHOULDER, R_ELBOW, JOINT_COUNT };
+enum Joint : uint8_t { L_SHOULDER, R_SHOULDER, WAIST, JOINT_COUNT };
 const JointConfig JOINTS[JOINT_COUNT] = {
   //  pin  reversed trim  min  max  rest
-  {   9,   true,     0,   35, 180,  40 },   // left shoulder (35: arm clears the fender)
-  {  10,   true,     0,   10, 150,  60 },   // left elbow
-  {  A1,   false,    0,   35, 180,  40 },   // right shoulder
-  {  A2,   false,    0,   10, 150,  60 },   // right elbow
+  {   9,   true,     0,   40, 180,  40 },   // left shoulder (below 40 the claw hits the fender)
+  {  A1,   false,    0,   40, 180,  40 },   // right shoulder
+  {  A3,   false,    0,   25, 155,  90 },   // waist (65 each way: the cables allow about 70)
 };
+const uint8_t ARMS_CLEAR_ANGLE = 50;       // with the waist turned, the arms swing over the
+                                           // lower body: keep the shoulders at least this high
 const uint16_t SERVO_SPEED_DEG_S = 180;    // how fast joints move
 const uint16_t SERVO_DETACH_MS   = 1500;   // stop holding after this long still: saves power,
                                            // and lets little hands move the arms freely

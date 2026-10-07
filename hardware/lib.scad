@@ -60,8 +60,8 @@ module ridge(h, w, r0 = 3.5, r1 = CL_D / 2) {
     translate([r0, 0, 0]) rotate([0, 90, 0])
         linear_extrude(r1 - r0) polygon([[0, -w / 2], [0, w / 2], [-h, 0]]);
 }
-module ridges(h = CL_RH, w = CL_RW, r1 = CL_D / 2) {
-    for (i = [0 : CL_RIDGES - 1]) rotate(i * 360 / CL_RIDGES) ridge(h, w, 3.5, r1);
+module ridges(h = CL_RH, w = CL_RW, r1 = CL_D / 2, r0 = 3.5) {
+    for (i = [0 : CL_RIDGES - 1]) rotate(i * 360 / CL_RIDGES) ridge(h, w, r0, r1);
 }
 
 // Horn hub (printable part). Servo side at z = 0, ridges on top.
@@ -90,7 +90,7 @@ module clutch_hub() {
 // Limb-side cut. Contact face at z = 0, limb material toward +Z.
 // depth: how thick the limb is here; spring pocket opens on the far side.
 module limb_socket_cut(depth, floor = 4) {
-    translate([0, 0, -0.01]) ridges(CL_RH + 0.4, CL_RW * 1.25, CL_D / 2 + 1);
+    translate([0, 0, -0.01]) ridges(CL_RH + 0.4, CL_RW * 1.25, CL_D / 2 + 1, 2.5);
     translate([0, 0, -1]) cylinder(d = M3 + 0.4, h = depth + 2);
     translate([0, 0, floor]) cylinder(d = SPRING_D, h = depth);
 }

@@ -14,7 +14,7 @@ LB_BOSS = [for (x = [-1, 1], y = [-80, 0, 80]) [x * (LB[0] / 2 - 6), y]];
 TORSO_BOSS = [for (x = [-1, 1], y = [-1, 1]) [x * 38, y * 31]];
 BUMPER_X = 36; BUMPER_Z = 14;
 FENDER_Y = [-60, 0, 60]; FENDER_Z = 22;
-TRAY_BOSS = [for (x = [-1, 1], y = [-22, 76]) [x * 34, y]];
+TRAY_BOSS = [for (x = [-1, 1], y = [-22, 68]) [x * 33, y]];   // clear of the lid columns and rear bumper bosses
 
 module tub(size, r, wall) {
     intersection() {
@@ -52,11 +52,19 @@ module lower_body() {
             for (x = [-1, 1]) translate([x * 41.5 - 1.5, -77.5, 0]) cube([3, 44, 10]);
             // buzzer holder behind the grille (12 mm passive buzzer)
             translate([0, -L / 2 + WALL, 30]) rotate([-90, 0, 0]) cylinder(d = 16, h = 9);
+            // waist servo tower: the servo drops in from the top, tabs rest on the rim
+            waist_frame() translate([-11.5, -8.9, -(WS_TAB_Z - WALL)]) cube([34.2, 17.8, WS_TAB_Z - WALL - SV_TAB_T]);
             }}
         }
         // chassis mounting slots + motor wire hole in the floor
         for (y = [-66, 0, 66], x = [-1, 1]) translate([x * 26, y, -1]) slot(18, M3, WALL + 2);
         translate([-17, 33, -1]) cube([34, 14, WALL + 2]);
+        // waist servo pocket, tab screw pilots, cable slot
+        waist_frame() {
+            translate([SV_SHAFT - SV_L / 2 - 0.4, -SV_W / 2 - 0.4, -SV_TAB_T - SV_BELOW - 0.5]) cube([SV_L + 0.8, SV_W + 0.8, 40]);
+            for (s = [-1, 1]) translate([SV_SHAFT + s * SV_SCREW / 2, 0, -SV_TAB_T - 8]) cylinder(d = M2_PILOT, h = 9);
+            translate([SV_SHAFT + SV_L / 2 - 1, -3, -SV_TAB_T - 14]) cube([8, 6, 15]);
+        }
         // insert holes: lid columns (from the top), bumpers, fenders, tray
         for (p = LB_BOSS) translate([p[0], p[1], H]) mirror([0, 0, 1]) insert_hole();
         for (y = [-1, 1], x = [-1, 1]) translate([x * BUMPER_X, y * (L / 2 + 1), BUMPER_Z])
@@ -78,16 +86,32 @@ module lower_body() {
     }
 }
 
+// Lid with the waist bearing housing on top. The 6808 bearing presses into the
+// housing from above and is held by the bearing cap.
+CAP_LOBE_A = [0, 180, 270];
+CAP_LOBE_R = BR_HOUSE_OD / 2 + 2.5;
+CABLE_R = [BR_HOUSE_OD / 2 + 1, BR_HOUSE_OD / 2 + 15];   // cable arc: inner, outer radius
+
 module lid() {
     W = LB[0]; L = LB[1];
+    HH = LID_T + BR[2];
     difference() {
-        translate([-W / 2, -L / 2, 0]) rslab([W, L, LID_T], LB_R);
+        union() {
+            translate([-W / 2, -L / 2, 0]) rslab([W, L, LID_T], LB_R);
+            cylinder(d = BR_HOUSE_OD, h = HH);
+            for (a = CAP_LOBE_A) rotate(a) translate([CAP_LOBE_R, 0, 0]) cylinder(d = 9, h = HH);
+        }
         for (p = LB_BOSS) translate([p[0], p[1], -1]) {
             cylinder(d = M3, h = LID_T + 2);
             translate([0, 0, LID_T - 1.6]) cylinder(d1 = M3, d2 = 6.4, h = 1.61);   // countersink
         }
-        for (p = TORSO_BOSS) translate([p[0], p[1], -1]) cylinder(d = M3, h = LID_T + 2);
-        translate([-25, -16, -1]) rslab([50, 32, LID_T + 2], 4);    // cable pass under the torso
+        // bearing seat (outer race sits on the lid) and the opening under it
+        translate([0, 0, LID_T]) cylinder(d = BR[1] + 0.15, h = BR[2] + 1, $fn = 96);
+        translate([0, 0, -1]) cylinder(d = BR_OUT_ID, h = HH + 2);
+        for (a = CAP_LOBE_A) rotate(a) translate([CAP_LOBE_R, 0, HH + 0.01]) mirror([0, 0, 1]) insert_hole();
+        // the torso cables swing through this arc as the waist turns
+        rotate(90 - WAIST_RANGE - 8) rotate_extrude(angle = 2 * WAIST_RANGE + 16)
+            translate([CABLE_R[0], -1]) square([CABLE_R[1] - CABLE_R[0], LID_T + 2]);
         translate([0, 70, -1]) cylinder(d = 16.2, h = LID_T + 2);    // mode button (16 mm panel button)
     }
 }
@@ -95,11 +119,73 @@ module lid() {
 // Pegboard tray: boards mount with M3 nylon standoffs or zip ties.
 module tray() {
     difference() {
-        translate([-38, -28, 0]) rslab([76, 110, 3], 4);
+        translate([-37, -28, 0]) rslab([74, 102, 3], 4);
         for (p = TRAY_BOSS) translate([p[0], p[1], -1]) cylinder(d = M3, h = 5);
-        for (x = [-32 : 8 : 32], y = [-20 : 8 : 76])
+        translate([-9.5, -12.5, -1]) rslab([19, 36, 5], 2);    // waist servo tower passes through
+        for (x = [-32 : 8 : 32], y = [-20 : 8 : 68])
             if (min([for (p = TRAY_BOSS) norm([x - p[0], y - p[1]])]) > 7)
                 translate([x, y, -1]) cylinder(d = 3.2, h = 5, $fn = 16);
+    }
+}
+
+// ======================================================================
+// WAIST: the torso turns on the bearing. Waist servo stands in the lower
+// body, its clutch hub drives the waist plate tube from below.
+// World frame (lower body frame).
+// ======================================================================
+WS_FACE_Z = LB[2];                         // clutch contact face = lid underside
+WS_TAB_Z = WS_FACE_Z - LIMB_FACE;          // waist servo tab plane
+module waist_frame() { translate([0, 0, WS_TAB_Z]) rotate([0, 0, 90]) children(); }
+
+WP_DROP = CAP_T + WAIST_GAP;               // plate bottom -> inner race top
+WP_FACE = -(WP_DROP + BR[2] + LID_T);      // contact face, plate frame
+CLAMP_A = [90, 210, 330];
+CLAMP_R = 17;
+
+// Waist plate: torso bolts on top, tube goes down through the bearing.
+// Local frame: plate bottom at z = 0, centred.
+module waist() {
+    difference() {
+        union() {
+            translate([-WP[0] / 2, -WP[1] / 2, 0]) rslab(WP, TO_R);
+            translate([0, 0, -WP_DROP]) cylinder(d = BR_IN_OD - 0.5, h = WP_DROP + 0.01);       // rests on the inner race
+            translate([0, 0, -WP_DROP - BR[2]]) cylinder(d = BR[0] - 0.1, h = BR[2] + 0.01, $fn = 96);
+            translate([0, 0, WP_FACE]) cylinder(d = 30, h = LID_T + 0.01);
+        }
+        translate([0, 0, WP_FACE]) limb_socket_cut(WP[2] - WP_FACE, 4);
+        for (a = CLAMP_A) rotate(a) translate([CLAMP_R, 0, -WP_DROP - BR[2]]) insert_hole(INS_L + 1);
+        for (p = TORSO_BOSS) translate([p[0], p[1], -1]) cylinder(d = M3, h = WP[2] + 2);
+        // cables down to the lower body
+        hull() for (x = [-9, 9]) translate([x, 33.25, -1]) cylinder(d = 6.5, h = WP[2] + 2);
+    }
+}
+
+// Holds the bearing's outer race down. Local frame: bottom on the housing top.
+module bearing_cap() {
+    difference() {
+        union() {
+            cylinder(d = BR_HOUSE_OD, h = CAP_T);
+            for (a = CAP_LOBE_A) rotate(a) translate([CAP_LOBE_R, 0, 0]) cylinder(d = 9, h = CAP_T);
+        }
+        translate([0, 0, -1]) cylinder(d = BR_OUT_ID, h = CAP_T + 2);
+        for (a = CAP_LOBE_A) rotate(a) translate([CAP_LOBE_R, 0, -1]) {
+            cylinder(d = M3, h = CAP_T + 2);
+            translate([0, 0, CAP_T + 1 - 1.6]) cylinder(d1 = M3, d2 = 6.4, h = 1.61);
+        }
+    }
+}
+
+// Clamps the plate tube under the inner race, so the robot can be lifted by its head.
+// Local frame: bottom face at z = 0 (countersinks underneath).
+module clamp_ring() {
+    t = LID_T - 0.3;
+    difference() {
+        cylinder(d = BR_IN_OD - 0.5, h = t);
+        translate([0, 0, -1]) cylinder(d = 30.6, h = t + 2);
+        for (a = CLAMP_A) rotate(a) translate([CLAMP_R, 0, -0.01]) {
+            cylinder(d = M3, h = t + 1);
+            cylinder(d1 = 6.4, d2 = M3, h = 1.6);
+        }
     }
 }
 
@@ -149,11 +235,11 @@ module torso() {
         for (s = [-1, 1]) shoulder_frame(s) servo_mount_cut(6);
         // clutch wells
         for (s = [-1, 1]) translate([s * (SH_TAB_X + 6 - 0.01), SHOULDER_Y, SHOULDER_Z]) rotate([0, s * 90, 0]) cylinder(d = WELL_D, h = W);
+        // driver access to the waist clutch screw (the head covers it)
+        translate([0, 0, H - WALL - 1]) cylinder(d = 8, h = WALL + 2);
         // face cable up into the head
         translate([HEAD_CABLE[0], HEAD_CABLE[1], H - WALL - 1]) cylinder(d = 12, h = WALL + 2);
         for (p = HEAD_BOLT) translate([p[0], p[1], H + 0.01]) mirror([0, 0, 1]) insert_hole(INS_L + 1);
-        // elbow cable slots behind each shoulder
-        for (s = [-1, 1]) translate([s * W / 2 - 5, 24, 44]) cube([10, 10, 6]);
         // insert holes
         for (p = TORSO_BOSS) translate([p[0], p[1], 0]) insert_hole();
         for (p = GUARD_BOSS) translate([p[0], -D / 2 - 1, p[1]]) rotate([-90, 0, 0]) insert_hole(INS_L + 1);
@@ -273,62 +359,34 @@ module face_carrier() {
 // Local frame: shoulder axis is the X axis, inner face at x = 0,
 // arm hangs down -Z, front is -Y.
 // ======================================================================
-EL_TAB_X = UA_T + 1 - LIMB_FACE;          // elbow servo tab plane inside the upper arm
-UA_BOT = -UA_LEN - 22;
-UA_SCREWS = [[-9, -26], [-10, -78], [10, -78]];   // [y, z] of the half-joining screws
+// One-piece arm in the v4 style: slim upper arm, fixed elbow bend, claw.
+// Only the shoulder moves (servo + clutch in the torso).
 
-module elbow_frame() { translate([EL_TAB_X, 0, -UA_LEN]) rotate([0, 90, 0]) rotate([0, 0, 180]) children(); }
-
-module upper_arm_solid() {
-    hull() {
-        translate([0, -UA_W / 2, -20]) rbox([UA_T, UA_W, 36], 7);
-        translate([0, -UA_W / 2, UA_BOT]) rbox([UA_T, UA_W, 36], 7);
-    }
+// Disc with rounded edges along +Z.
+module rdisk(d, h, r = 3) {
+    hull() for (z = [r, h - r]) translate([0, 0, z]) rotate_extrude($fn = 48) translate([d / 2 - r, 0]) circle(r, $fn = 16);
 }
 
-module upper_arm_cuts() {
-    rotate([0, 90, 0]) limb_socket_cut(UA_T, 5);                          // shoulder clutch
-    elbow_frame() servo_mount_cut(6);                                      // elbow servo
-    translate([EL_TAB_X + 6 - 0.01, 0, -UA_LEN]) rotate([0, 90, 0]) cylinder(d = WELL_D, h = UA_T);   // elbow well
-    // cable channel from the servo bay to the back of the arm
-    translate([6, -4, -46]) cube([EL_TAB_X - 6 + 0.1, 8, 30]);
-    translate([6, 0, -22]) cube([10, UA_W, 7]);
-    // half-joining screws: counterbored from the outside, inserts in the inner half
-    for (p = UA_SCREWS) translate([UA_T + 1, p[0], p[1]]) rotate([0, -90, 0]) {
-        cylinder(d = M3, h = UA_T - EL_TAB_X + 1.1);
-        cylinder(d = M3_HEAD, h = 5);
-    }
-    for (p = UA_SCREWS) translate([EL_TAB_X + 0.01, p[0], p[1]]) rotate([0, -90, 0]) insert_hole();
+module claw() {
+    translate([-14, -10, -6]) rbox([28, 20, 12], 3);
+    for (s = [-1, 1]) translate([s * 8, 0, -6]) rotate([0, s * 8, 0]) translate([-3, -8, -28]) rbox([6, 16, 30], 2.5);
 }
 
-module upper_arm_inner() {
-    difference() {
-        intersection() { upper_arm_solid(); translate([-1, -50, -150]) cube([EL_TAB_X + 1, 100, 300]); }
-        upper_arm_cuts();
-    }
-}
-module upper_arm_outer() {
-    difference() {
-        intersection() { upper_arm_solid(); translate([EL_TAB_X, -50, -150]) cube([UA_T, 100, 300]); }
-        upper_arm_cuts();
-    }
-}
-
-// Forearm with a fixed two-finger claw. Elbow axis = X axis, inner face at x = 0.
-module forearm() {
+module arm() {
+    c = ARM_T / 2;      // limb centre line (x)
     difference() {
         union() {
-            hull() {
-                translate([0, -FA_W / 2, -14]) rbox([FA_T, FA_W, 28], 6);
-                translate([0, -FA_W / 2 - 2, -FA_LEN - 6]) rbox([FA_T, FA_W + 4, 14], 6);
-            }
-            // fingers
-            for (s = [-1, 1]) hull() {
-                translate([0, s * 11 - 4, -FA_LEN - 4]) rbox([FA_T, 8, 8], 3.5);
-                translate([2, s * 9 - 3.5, -FA_LEN - 30]) rbox([FA_T - 4, 7, 7], 3.2);
+            rotate([0, 90, 0]) rdisk(CL_D + 6, ARM_T, 4);                                   // shoulder disc
+            translate([c - ARM_T / 2, -ARM_W / 2, -ARM_UP]) rbox([ARM_T, ARM_W, ARM_UP + 8], 5);   // upper arm
+            translate([0, 0, -ARM_UP]) {
+                rotate([0, 90, 0]) rdisk(20, ARM_T, 4);                                       // elbow knuckle
+                rotate([-ARM_BEND, 0, 0]) {
+                    translate([c - 10, -7, -ARM_FORE]) rbox([20, 14, ARM_FORE + 6], 5);       // forearm
+                    translate([c, 0, -ARM_FORE - 2]) claw();
+                }
             }
         }
-        rotate([0, 90, 0]) limb_socket_cut(FA_T, 5);
+        rotate([0, 90, 0]) limb_socket_cut(ARM_T, 5);                                         // shoulder clutch
     }
 }
 
@@ -377,9 +435,8 @@ module antenna() {
 }
 
 // ======================================================================
-PARTS = ["lower_body", "lid", "tray", "torso", "chest_guard", "head_front", "head_back",
-         "face_carrier", "upper_arm_inner", "upper_arm_outer", "forearm", "clutch_hub",
-         "bumper", "fender", "antenna"];
+PARTS = ["lower_body", "lid", "tray", "waist", "bearing_cap", "clamp_ring", "torso", "chest_guard",
+         "head_front", "head_back", "face_carrier", "arm", "clutch_hub", "bumper", "fender", "antenna"];
 
 module print_part(p) {
     // each part laid out in a good print orientation
@@ -391,9 +448,10 @@ module print_part(p) {
     if (p == "head_front") rotate([90, 0, 0]) head_front();
     if (p == "head_back") rotate([-90, 0, 0]) translate([0, -HD[1] / 2, 0]) head_back();
     if (p == "face_carrier") rotate([-90, 0, 0]) face_carrier();
-    if (p == "upper_arm_inner") rotate([0, 90, 0]) upper_arm_inner();
-    if (p == "upper_arm_outer") rotate([0, -90, 0]) translate([-UA_T, 0, 0]) upper_arm_outer();
-    if (p == "forearm") rotate([0, -90, 0]) translate([-FA_T, 0, 0]) forearm();
+    if (p == "arm") rotate([0, -90, 0]) translate([-ARM_T, 0, 0]) arm();
+    if (p == "waist") rotate([180, 0, 0]) translate([0, 0, -WP[2]]) waist();
+    if (p == "bearing_cap") bearing_cap();
+    if (p == "clamp_ring") clamp_ring();
     if (p == "clutch_hub") clutch_hub();
     if (p == "bumper") rotate([-90, 0, 0]) bumper();
     if (p == "fender") fender();

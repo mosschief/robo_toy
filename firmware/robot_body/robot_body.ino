@@ -34,7 +34,7 @@ bool pendingShort = false, pendingLong = false;   // button presses seen while b
 
 // ---------------- serial link to the ESP32-CAM ----------------
 // Lines of text, for example "D 50 -50" (drive), "F 1" (face), "S 2" (sound),
-// "J 3 120" (joint 3 to 120 degrees), "P 1" (pose), "M 1" (mode), "G 0" (guard off).
+// "J 2 120" (waist to 120 degrees), "P 1" (pose), "M 1" (mode), "G 0" (guard off).
 char line[32];
 uint8_t lineLen = 0;
 
@@ -45,8 +45,8 @@ void doPose(uint8_t p) {
     case 0: robot.rest(); break;
     case 1: robot.armsUp(); break;
     case 2: robot.hug(); break;
-    case 3: robot.arms(90, 90); robot.elbows(10, 10); break;          // point forward
-    case 4: robot.arms(170, 40); robot.elbows(30, 60); break;         // one arm up
+    case 3: robot.arms(60, 60); break;                                // point forward
+    case 4: robot.arms(170, 40); break;                               // one arm up
     case 5: robot.wave(); break;
   }
 }
@@ -137,10 +137,7 @@ void playMode() {
   if (t > nextIdleMove) {
     nextIdleMove = t + random(3000, 8000);
     int8_t dir = random(-1, 2);
-    robot.look(dir);
-    // the head is part of the body, so turn a little on the tracks to look
-    if (dir < 0) robot.turnLeft(250, 40);
-    if (dir > 0) robot.turnRight(250, 40);
+    robot.look(dir);   // turns the upper body at the waist
     if (random(4) == 0) robot.arms(random(40, 120), random(40, 120));
     else robot.arms(JOINTS[L_SHOULDER].restAngle, JOINTS[R_SHOULDER].restAngle);
   }

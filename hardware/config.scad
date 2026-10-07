@@ -32,7 +32,7 @@ HORN_D    = 21.0;
 HORN_T    = 2.0;
 HORN_HOLE_R = 7.5;  // radius of the screw holes used to fix horn to the clutch hub
 
-// ---------- breakaway clutch (one design, used at all 4 arm joints) ----------
+// ---------- breakaway clutch (one design, used at the shoulders and the waist) ----------
 // Horn hub (on the servo) has radial V ridges; the limb has matching grooves.
 // An M3 screw + compression spring (8 mm OD, ~12 mm long) presses them together.
 // A hard yank makes the limb click round instead of stripping servo gears.
@@ -70,12 +70,11 @@ FACE_Z = 52;            // centre of the 16x16 display above head bottom
 NECK_GAP = 1;           // head bottom to torso top
 
 // ---------- arms ----------
-UA_T = 40;              // upper arm thickness (X) - holds the elbow servo
-UA_W = 30;              // upper arm width (Y)
-UA_LEN = 62;            // shoulder axis to elbow axis
-FA_T = 20;              // forearm thickness
-FA_W = 26;
-FA_LEN = 58;            // elbow axis to wrist
+ARM_T = 22;             // arm thickness along the shoulder axis (X)
+ARM_W = 16;             // upper arm width (Y)
+ARM_UP = 55;            // shoulder axis to elbow
+ARM_FORE = 42;          // elbow to claw
+ARM_BEND = 50;          // fixed elbow bend, degrees forward
 
 // ---------- face: 4 x MAX7219 8x8 modules in a 2x2 square ----------
 MX = 32.2;              // module outline (FC-16 style, 32 x 32 PCB)
@@ -91,7 +90,18 @@ CAM_PCB = [27, 40.5, 1.6];
 TOF_PCB = [10.7, 25, 1.6];      // GY-VL53L0XV2 breakout, mounted upright
 CHEST_WIN = [52, 26, 2];        // clear window sheet over lens + sensor
 
+// ---------- waist: the upper body turns on a 6808 bearing in the lid ----------
+BR = [40, 52, 7];       // 6808-2RS bearing: bore, outside diameter, width
+BR_IN_OD  = 44.5;       // inner race outside diameter (clamp/collar stay inside this)
+BR_OUT_ID = 47.5;       // outer race inside diameter (shoulders stay outside this)
+BR_HOUSE_OD = 58;       // printed housing on the lid
+CAP_T = 3;              // bearing cap on top of the housing
+WAIST_GAP = 1;          // cap top to waist plate
+WP = [96, 80, 4];       // waist plate (torso footprint)
+WAIST_RANGE = 65;       // degrees each way from straight ahead
+
 // ---------- world placement (z = 0 is the chassis deck top) ----------
 Z_LB    = 0;
-Z_TORSO = LB[2] + LID_T;
+Z_WAIST = LB[2] + LID_T + BR[2] + CAP_T + WAIST_GAP;   // waist plate bottom
+Z_TORSO = Z_WAIST + WP[2];
 Z_HEAD  = Z_TORSO + TO[2] + NECK_GAP;

@@ -5,7 +5,7 @@ use <../concepts/parts.scad>
 
 SHOW_TANK = true;
 SH = 40;      // shoulder angle, degrees forward from straight down
-EL = 50;      // elbow angle, degrees forward relative to the upper arm
+WAIST = 0;    // waist turn, degrees (+ = left)
 EXPLODE = 0;  // 0 = assembled, ~1 = exploded view
 
 C_BODY = [1.00, 0.62, 0.10];
@@ -36,17 +36,27 @@ module electronics_lb() {
     color([0.1, 0.1, 0.1]) translate([0, -LB[1] / 2 + WALL + 1, 30]) rotate([-90, 0, 0]) cylinder(d = 12, h = 8);  // buzzer
 }
 
-module upper_arm_assy() {
-    color(C_BODY) upper_arm_inner();
-    color(C_BODY * 0.92) translate([E * 25, 0, 0]) upper_arm_outer();
-    elbow_frame() servo_vitamin();
-    color(C_ACC) translate([EL_TAB_X + HUB_FACE + E * 35, 0, -UA_LEN]) rotate([0, 90, 0]) clutch_hub();
-    translate([UA_T + 1 + E * 60, 0, -UA_LEN]) rotate([-EL, 0, 0]) color(C_BODY) forearm();
-}
-
 module arm_assy() {
     color(C_ACC) translate([SH_TAB_X + HUB_FACE + E * 20, SHOULDER_Y, SHOULDER_Z]) rotate([0, 90, 0]) clutch_hub();
-    translate([TO[0] / 2 + 1 + E * 50, SHOULDER_Y, SHOULDER_Z]) rotate([-SH, 0, 0]) upper_arm_assy();
+    translate([TO[0] / 2 + 1 + E * 50, SHOULDER_Y, SHOULDER_Z]) rotate([-SH, 0, 0]) color(C_BODY) arm();
+}
+
+module bearing_vitamin() {
+    color([0.75, 0.77, 0.8]) difference() {
+        cylinder(d = BR[1], h = BR[2], $fn = 64);
+        translate([0, 0, -1]) cylinder(d = BR[0], h = BR[2] + 2, $fn = 64);
+    }
+}
+
+module waist_assy() {
+    waist_frame() servo_vitamin();
+    color(C_ACC) translate([0, 0, WS_TAB_Z + HUB_FACE - E * 20]) clutch_hub();
+    translate([0, 0, LB[2] + LID_T + E * 55]) bearing_vitamin();
+    color(C_ACC) translate([0, 0, LB[2] + LID_T + BR[2] + E * 65]) bearing_cap();
+    rotate([0, 0, WAIST]) {
+        color(C_ACC) translate([0, 0, LB[2] + 0.3 + E * 25]) clamp_ring();
+        color(C_BODY * 0.9) translate([0, 0, Z_WAIST + E * 80]) waist();
+    }
 }
 
 module torso_assy() {
@@ -82,8 +92,11 @@ module tank() {
         for (s = [-1, 1]) mirror([s < 0 ? 1 : 0, 0, 0]) color(C_ACC) translate([LB[0] / 2 + E * 30, 0, 0]) fender();
     }
     color(C_BODY * 0.95) translate([0, 0, LB[2] + E * 40]) lid();
-    translate([0, 0, Z_TORSO + E * 90]) torso_assy();
-    translate([0, 0, Z_HEAD + E * 170]) head_assy();
+    waist_assy();
+    rotate([0, 0, WAIST]) {
+        translate([0, 0, Z_TORSO + E * 105]) torso_assy();
+        translate([0, 0, Z_HEAD + E * 185]) head_assy();
+    }
 }
 
 if (!is_undef(SHOW_TANK) ? SHOW_TANK : true) tank();

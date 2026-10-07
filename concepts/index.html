@@ -91,21 +91,22 @@ code { font-family: var(--mono); font-size: .85em; }
     <div class="concept-body">
       <div class="shots">
         <img src="final/tank.png" alt="Final Tank assembly: printed orange body on a bought track chassis, rubber bumpers, chunky two-part arms with claws, chest camera and distance sensor behind a blue guard, and a 16 by 16 LED face in the head">
-        <img src="final/tank_exploded.png" alt="Exploded view showing the lower body tub with battery and electronics tray, the lid, the torso with clutch hubs, the split arms and the head with its back cap">
+        <img src="final/tank_exploded.png" alt="Exploded view showing the lower body tub with battery and electronics tray, the lid, the bearing, waist plate and waist servo, the torso with its shoulder hubs, the one-piece arms and the head with its back cap">
         <img src="final/tank_back.png" alt="Rear view showing the power switch, charge port, PROG/RUN switch and Nano USB opening above the rear bumper">
       </div>
       <div class="info">
         <h3>How it is built</h3>
         <dl class="spec">
-          <dt>Lower body</dt><dd>Tub on the chassis deck holding the battery, Nano, motor driver, 5 V converter and charger. A lid on top carries the torso and the mode button.</dd>
-          <dt>Torso</dt><dd>Shoulder servos sit on internal bulkheads; the head bolts straight onto the top, so Tank turns on its tracks to look around. The camera and distance sensor slide into rails behind the chest guard.</dd>
+          <dt>Lower body</dt><dd>Tub on the chassis deck holding the battery, Nano, motor driver, 5 V converter and charger. A lid on top carries the mode button and the waist bearing, and the waist servo stands below it.</dd>
+          <dt>Waist</dt><dd>The whole upper body turns 65° each way on a 6808 ball bearing in the lid. A clamp ring under the bearing means the robot can be picked up by its head.</dd>
+          <dt>Torso</dt><dd>Shoulder servos sit on internal bulkheads and the head bolts straight onto the top, so head, chest camera and arms turn together at the waist. The camera and distance sensor slide into rails behind the chest guard.</dd>
           <dt>Head</dt><dd>Four 8×8 modules sit face-first in a carrier behind a 2 mm clear window. The back cap unscrews.</dd>
-          <dt>Arms</dt><dd>Each upper arm is two halves that clamp the elbow servo. The forearm has a fixed two-finger claw.</dd>
+          <dt>Arms</dt><dd>The slim v4 shape: one printed piece per arm with a fixed elbow bend and a two-finger claw. Only the shoulder moves.</dd>
           <dt>Back panel</dt><dd>Power switch, USB-C charging, PROG/RUN switch and Nano USB, all above the bumper.</dd>
         </dl>
         <h3>Why it survives a kid</h3>
         <ul class="pros">
-          <li>All four arm joints have a spring clutch: a hard yank makes the limb click round instead of stripping the servo gears.</li>
+          <li>Both shoulders and the waist have a spring clutch: a hard yank or twist makes the part click round instead of stripping the servo gears.</li>
           <li>Servos let go after 1.5 s of standing still, so pushing an arm by hand never fights the motor.</li>
           <li>PETG body with 4 walls, TPU bumpers and antenna, and the screens sit behind clear windows.</li>
           <li>Driving stops by itself 12 cm from a wall, and 0.4 s after the phone stops sending.</li>
@@ -118,14 +119,14 @@ code { font-family: var(--mono); font-size: .85em; }
   <section id="phone">
     <h2>Playing with it</h2>
     <div class="concept-body">
-      <div class="shots"><img src="final/phone.png" alt="Phone control page: camera view, distance and battery readout, a round orange joystick, Slow, Light and Bumper toggles, then buttons for faces, sounds, arm poses, and modes" style="max-width:320px"></div>
+      <div class="shots"><img src="final/phone.png" alt="Phone control page: camera view, distance and battery readout, a round orange joystick, Slow, Light and Bumper toggles, then buttons for faces, sounds, arm poses, modes and a Turn body slider" style="max-width:320px"></div>
       <div class="info">
-        <p>Join the Wi-Fi network <strong>Tank-XXXX</strong> (password <code>tankrobot</code>) and open <code>192.168.4.1</code>. The page shows the camera with a joystick and buttons for faces, sounds, arm poses and modes. It also shows the distance and battery readings.</p>
+        <p>Join the Wi-Fi network <strong>Tank-XXXX</strong> (password <code>tankrobot</code>) and open <code>192.168.4.1</code>. The page shows the camera with a joystick and buttons for faces, sounds, arm poses and modes, plus a slider that turns the body. It also shows the distance and battery readings.</p>
         <p>Without a phone, the mode button on the lid switches modes, and the face shows the number:</p>
         <div class="table-wrap"><table style="min-width:0">
           <thead><tr><th>Mode</th><th>What Tank does</th></tr></thead>
           <tbody>
-            <tr><td class="num">1 Play</td><td>turns a little to look around, blinks, waves at a hand near its chest</td></tr>
+            <tr><td class="num">1 Play</td><td>turns its body to look around, blinks, waves at a hand near its chest</td></tr>
             <tr><td class="num">2 Explore</td><td>drives on its own and turns away from obstacles</td></tr>
             <tr><td class="num">3 Dance</td><td>dances to a tune</td></tr>
             <tr><td class="num">4 My code</td><td>runs the program your kid writes in <code>my_program.h</code></td></tr>
@@ -139,7 +140,7 @@ code { font-family: var(--mono); font-size: .85em; }
 
   <section id="final-parts">
     <h2>What to buy</h2>
-    <p class="note">You already have the Otto Nano board, 4 servos, the buzzer and the LED modules (you need 4). MG90S metal-gear servos for the arms are recommended.</p>
+    <p class="note">You already have the Otto Nano board, 3 servos, the buzzer and the LED modules (you need 4). An MG90S metal-gear servo for the waist is recommended.</p>
     <div class="table-wrap">
       <table>
         <thead><tr><th>Part</th><th>Qty</th><th>Approx. cost</th></tr></thead>
@@ -148,11 +149,12 @@ code { font-family: var(--mono); font-size: .85em; }
           <tr><td>ESP32-CAM (AI-Thinker) + ESP32-CAM-MB USB adapter</td><td class="num">1</td><td class="num">$8–12</td></tr>
           <tr><td>VL53L0X distance sensor (GY-VL53L0XV2)</td><td class="num">1</td><td class="num">$3</td></tr>
           <tr><td>TB6612FNG motor driver</td><td class="num">1</td><td class="num">$3</td></tr>
+          <tr><td>6808-2RS ball bearing, 40 × 52 × 7 mm (waist)</td><td class="num">1</td><td class="num">$3–5</td></tr>
           <tr><td>2 × 18650 cells, holder, 2S protection board</td><td class="num">1</td><td class="num">$12</td></tr>
           <tr><td>USB-C 2S (8.4 V) charging module</td><td class="num">1</td><td class="num">$3</td></tr>
           <tr><td>5 V 5 A buck converter (XL4015)</td><td class="num">1</td><td class="num">$4</td></tr>
           <tr><td>Rocker switch, mini slide switch, 16 mm panel button</td><td class="num">1 each</td><td class="num">$4</td></tr>
-          <tr><td>Compression springs ~8 mm OD × 12 mm</td><td class="num">5</td><td class="num">$3</td></tr>
+          <tr><td>Compression springs ~8 mm OD × 12 mm</td><td class="num">3</td><td class="num">$3</td></tr>
           <tr><td>M3 heat-set inserts, M3 and M2 screws, 5 M3 nuts</td><td class="num">~45 inserts</td><td class="num">$8</td></tr>
           <tr><td>2 mm clear PETG or polycarbonate sheet</td><td class="num">small</td><td class="num">$5</td></tr>
           <tr><td>PETG and TPU filament</td><td class="num">–</td><td class="num">–</td></tr>
@@ -166,7 +168,7 @@ code { font-family: var(--mono); font-size: .85em; }
     <div class="grid2">
       <div><h3>Measure the chassis</h3><p>Chassis sizes vary between sellers. Set <code>CH_*</code> in <code>hardware/config.scad</code> and re-run <code>export.sh</code>. If the deck holes don't line up with the floor slots, drill new ones.</p></div>
       <div><h3>Check the LED modules</h3><p>The face carrier fits the 32 × 32 mm modules (FC-16 style). If yours are the longer 50 × 32 mm boards, the carrier needs redrawing.</p></div>
-      <div><h3>Print a clutch first</h3><p>Print one <code>clutch_hub</code> and one <code>forearm</code> and test the click. If the click is too stiff or too loose, change the spring or <code>CL_RH</code> in <code>config.scad</code>.</p></div>
+      <div><h3>Print a clutch first</h3><p>Print one <code>clutch_hub</code> and one <code>arm</code> and test the click. If the click is too stiff or too loose, change the spring or <code>CL_RH</code> in <code>config.scad</code>.</p></div>
       <div><h3>Not tested on hardware yet</h3><p>Both firmwares compile, and the parts were fit-checked in the 3D model, but nothing has been printed or powered on. Expect a little tuning: servo trims, the face module order and track direction are all in <code>config.h</code>.</p></div>
     </div>
   </section>
