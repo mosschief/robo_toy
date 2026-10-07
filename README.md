@@ -1,6 +1,6 @@
 # Tank: a tough Arduino robot toy
 
-A kid-proof robot on a bought tank chassis. Its upper body turns at the waist,
+A kid-proof robot on a printed tracked base. Its upper body turns at the waist,
 the arms and waist click instead of breaking, and it has a 16 x 16 LED face,
 a Wi-Fi camera and a distance sensor in the chest, and a phone control page. It reuses the electronics from
 the Otto DIY "fat version" (Nano + shield, servos, LED matrix, buzzer).

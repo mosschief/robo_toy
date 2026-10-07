@@ -90,14 +90,16 @@ code { font-family: var(--mono); font-size: .85em; }
     </div>
     <div class="concept-body">
       <div class="shots">
-        <img src="final/tank.png" alt="Final Tank assembly: printed orange body on a bought track chassis, rubber bumpers, chunky two-part arms with claws, chest camera and distance sensor behind a blue guard, and a 16 by 16 LED face in the head">
+        <img src="final/tank.png" alt="Final Tank assembly: printed orange body on a printed tracked base with link tracks, rubber bumpers, slim arms with claws, chest camera and distance sensor behind a blue guard, and a 16 by 16 LED face in the head">
         <img src="final/tank_exploded.png" alt="Exploded view showing the lower body tub with battery and electronics tray, the lid, the bearing, waist plate and waist servo, the torso with its shoulder hubs, the one-piece arms and the head with its back cap">
+        <img src="final/base.png" alt="Printed tracked base on its own: blue deck and side frames, black printed link tracks, yellow sprockets, idlers and small road wheels, and a gear motor under the deck">
         <img src="final/tank_back.png" alt="Rear view showing the power switch, charge port, PROG/RUN switch and Nano USB opening above the rear bumper">
       </div>
       <div class="info">
         <h3>How it is built</h3>
         <dl class="spec">
-          <dt>Lower body</dt><dd>Tub on the chassis deck holding the battery, Nano, motor driver, 5 V converter and charger. A lid on top carries the mode button and the waist bearing, and the waist servo stands below it.</dd>
+          <dt>Base</dt><dd>Printed, a scaled-up SMARS-style design: one-piece deck and side frames, two JGA25-370 gear motors, sprockets and wheels on 608 bearings, and 21 printed links per track joined with M3 screws.</dd>
+          <dt>Lower body</dt><dd>Tub on the base deck holding the battery, Nano, motor driver, 5 V converter and charger. A lid on top carries the mode button and the waist bearing, and the waist servo stands below it.</dd>
           <dt>Waist</dt><dd>The whole upper body turns 65° each way on a 6808 ball bearing in the lid. A clamp ring under the bearing means the robot can be picked up by its head.</dd>
           <dt>Torso</dt><dd>Shoulder servos sit on internal bulkheads and the head bolts straight onto the top, so head, chest camera and arms turn together at the waist. The camera and distance sensor slide into rails behind the chest guard.</dd>
           <dt>Head</dt><dd>Four 8×8 modules sit face-first in a carrier behind a 2 mm clear window. The back cap unscrews.</dd>
@@ -145,7 +147,8 @@ code { font-family: var(--mono); font-size: .85em; }
       <table>
         <thead><tr><th>Part</th><th>Qty</th><th>Approx. cost</th></tr></thead>
         <tbody>
-          <tr><td>Mini aluminium tank chassis with motors</td><td class="num">1</td><td class="num">$35–65</td></tr>
+          <tr><td>JGA25-370 gear motors, 6 V, 130–200 rpm</td><td class="num">2</td><td class="num">$16–24</td></tr>
+          <tr><td>608 bearings, M8 x 45 bolts, M3 x 25 screws + nylocs for the tracks</td><td class="num">12 / 6 / 42</td><td class="num">$15</td></tr>
           <tr><td>ESP32-CAM (AI-Thinker) + ESP32-CAM-MB USB adapter</td><td class="num">1</td><td class="num">$8–12</td></tr>
           <tr><td>VL53L0X distance sensor (GY-VL53L0XV2)</td><td class="num">1</td><td class="num">$3</td></tr>
           <tr><td>TB6612FNG motor driver</td><td class="num">1</td><td class="num">$3</td></tr>
@@ -166,7 +169,7 @@ code { font-family: var(--mono); font-size: .85em; }
   <section id="check">
     <h2>Before you print</h2>
     <div class="grid2">
-      <div><h3>Measure the chassis</h3><p>Chassis sizes vary between sellers. Set <code>CH_*</code> in <code>hardware/config.scad</code> and re-run <code>export.sh</code>. If the deck holes don't line up with the floor slots, drill new ones.</p></div>
+      <div><h3>Check the motors</h3><p>JGA25-370 sellers differ in face screw spacing and shaft offset. Set <code>MOT_*</code> in <code>hardware/config.scad</code> and re-run <code>export.sh</code>. Print a few track links and one sprocket first and check they mesh. To use a bought TP101 chassis instead, set <code>BASE = "bought"</code>.</p></div>
       <div><h3>Check the LED modules</h3><p>The face carrier fits the 32 × 32 mm modules (FC-16 style). If yours are the longer 50 × 32 mm boards, the carrier needs redrawing.</p></div>
       <div><h3>Print a clutch first</h3><p>Print one <code>clutch_hub</code> and one <code>arm</code> and test the click. If the click is too stiff or too loose, change the spring or <code>CL_RH</code> in <code>config.scad</code>.</p></div>
       <div><h3>Not tested on hardware yet</h3><p>Both firmwares compile, and the parts were fit-checked in the 3D model, but nothing has been printed or powered on. Expect a little tuning: servo trims, the face module order and track direction are all in <code>config.h</code>.</p></div>

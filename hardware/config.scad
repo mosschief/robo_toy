@@ -52,6 +52,31 @@ SPRING_D  = 9;      // counterbore for spring + washer
 CH_L = 193; CH_W = 163; CH_H = 60; TR_W = 30;
 DECK_GAP = (CH_W - 2 * TR_W);             // free width between the tracks
 
+// ---------- printed tracked base (BASE = "printed") or a bought TP101 ("bought") ----------
+BASE = "printed";
+TK_P   = 20;            // track link pitch
+TK_W   = 26;            // track link width
+TK_N   = 21;            // links per track
+SPR_T  = 8;             // sprocket teeth
+TK_R   = TK_P / (2 * sin(180 / SPR_T));     // sprocket pitch radius (26.1)
+TK_S   = (TK_P * TK_N - SPR_T * TK_P) / 2;  // sprocket-to-idler axle spacing (130)
+KN_D   = 8;             // link hinge knuckle diameter (M3 screw pin inside)
+LINK_T = 5;             // link plate thickness
+GROUSER = 2;            // grip rib on the outside of each link
+HORN_H = 6;             // guide horn on the inside of each link
+TK_X   = CH_W / 2 - TR_W / 2;               // track centre line (x)
+FR_X   = 51;            // outer face of the side frames
+FR_T   = 6;             // side frame thickness
+DECK_T = 4;
+Z_AXLE = 8 - TK_R - KN_D / 2;               // wheel axles; track top ends up ~8 above the deck
+WHEEL_R = TK_R - KN_D / 2;                  // idler radius (rolls on the knuckles)
+RW_R   = 15;            // road wheels, under the bottom run
+Z_RW   = Z_AXLE - TK_R + KN_D / 2 + RW_R;   // road wheel axles
+BRG608 = [8, 22, 7];    // skateboard bearing: bore, OD, width
+// JGA25-370 gear motor (check yours): gearbox, can, D shaft offset from the can centre
+MOT_GB_D = 25;  MOT_CAN_D = 24.4;  MOT_LEN = 52;
+MOT_SHAFT_D = 4;  MOT_SHAFT_FLAT = 3.5;  MOT_OFF = 7;  MOT_HOLE_SP = 17;
+
 // ---------- lower body (sits on the chassis deck) ----------
 LB = [96, 176, 47];     // X width, Y length, Z height of the tub
 LB_R = 8;

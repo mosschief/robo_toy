@@ -1,6 +1,7 @@
 # Building Tank
 
-Tank is a tough, kid-proof Arduino robot: a bought tank chassis, a printed body
+Tank is a tough, kid-proof Arduino robot: a printed tracked base (a scaled-up
+SMARS-style design), a printed body
 with a waist that turns the whole upper body on the tank base, two slim arms
 with claws, a 16 x 16 LED face, a Wi-Fi camera in the chest with a laser distance sensor, and a phone control page. It reuses
 the Otto DIY "fat version" electronics (Nano + shield, servos, LED matrix,
@@ -24,7 +25,13 @@ buzzer).
 
 | Part | Qty | Notes |
 |---|---|---|
-| Mini aluminium tank chassis with motors ("mini TP101" style, ~193 x 163 x 60 mm) | 1 | any similar chassis works; set `CH_*` in `hardware/config.scad` |
+| JGA25-370 gear motor, 6 V, 130-200 rpm, 4 mm D shaft | 2 | track drive; check the face screw spacing (`MOT_HOLE_SP`) and shaft offset (`MOT_OFF`) in `config.scad` |
+| 608 skateboard bearings (8 x 22 x 7) | 12 | idlers and road wheels |
+| M8 x 45 bolts + washers + nyloc nuts | 6 | wheel axles |
+| M3 x 25 screws + M3 nyloc nuts | 42 | track link pins |
+| M3 x 20 screws | 6 | sprocket halves to hub |
+| M3 x 6 set screws | 2 | sprocket hub onto the motor shaft |
+| *(or instead of all of the above)* TP101 / T101 aluminium tank chassis with motors | 1 | set `BASE = "bought"` in `config.scad` |
 | ESP32-CAM (AI-Thinker, OV2640) + ESP32-CAM-MB USB adapter | 1 | camera, Wi-Fi |
 | VL53L0X distance sensor breakout (GY-VL53L0XV2, ~25 x 10.7 mm) | 1 | |
 | TB6612FNG motor driver | 1 | |
@@ -65,6 +72,13 @@ in OpenSCAD and set `part`). Ready-made STLs are in `hardware/stl/`.
 | head_front | 1 | PETG | face down |
 | head_back | 1 | PETG | |
 | face_carrier | 1 | PETG | |
+| base_frame | 1 | PETG | already upside down (deck on the bed), 102 x 176 mm |
+| track_link | 42 | PETG | outside face down; 21 per track |
+| sprocket_half | 4 | PETG | |
+| sprocket_hub | 2 | PETG | flange down |
+| wheel_half | 4 | PETG | idlers |
+| road_wheel_half | 8 | PETG | |
+| wheel_spacer | 6 | PETG | |
 | arm | 2 | PETG | **mirror one** in the slicer for the left arm; supports under the claw |
 | clutch_hub | 3 | PETG | ridges up |
 | fender | 2 | PETG | **mirror one** |
@@ -106,6 +120,15 @@ of slack below the lid so the waist can turn both ways.
 
 ## 4. Assembly
 
+0. **Base.** Inserts into the 6 deck holes. Bolt each motor to the inside of
+   its side frame (2 x M3 from outside), shaft through the big hole, and zip-tie
+   the can into its cradle. Screw the two sprocket halves onto a hub (3 x M3 x
+   20), push it onto the motor shaft and tighten the set screw on the flat.
+   Press a 608 into each wheel half; each wheel is two halves with a spacer
+   between them on an M8 x 45 bolt (head inside the frame, washer and nyloc
+   outside). Build each track from 21 links (M3 x 25 + nyloc per joint, horns
+   facing in), wrap it round, join the last link, then slide the idler back in
+   its slot until the track is snug and tighten the idler nut.
 1. **Inserts.** Press M3 heat-set inserts into every round boss: lower body
    (6 on the rim, 4 bumper, 6 fender, 4 tray), lid (3 round the bearing
    housing), waist plate (3 in the bottom of the tube), torso (4 underneath,
@@ -137,8 +160,7 @@ of slack below the lid so the waist can turn both ways.
    waist hub (6 x M3 countersunk). Drop the waist spring screw (M3 x 20 + washer
    + spring) through the hole in the top of the torso and tighten it into the
    hub nut until the body only turns by hand with a firm twist. Lower body onto
-   the chassis deck (M3 through the floor slots; drill the deck if its holes
-   don't line up), fenders and bumpers on.
+   the base deck (6 x M3 x 10 through the floor slots into the deck inserts), fenders and bumpers on.
 8. **Arms.** Hang each arm on its shoulder hub: M3 x 30 + washer + spring from
    the outside into the hub nut. Tighten until the arm clicks round only with a
    firm twist.
@@ -207,8 +229,11 @@ modes and a Turn body slider. When the phone stops sending, the tracks stop with
 
 ## Things to check on your parts
 
-* **Chassis**: deck hole pattern and track height vary; edit `CH_*` in
-  `config.scad` and the fender height (`top_z` in `fender()`).
+* **Motors**: JGA25-370 sellers differ in face screw spacing and shaft offset;
+  set `MOT_*` in `config.scad`. The TB6612 is fine for these at the default
+  `TRACK_MAX_PWM`; if a motor stalls a lot, lower the speed.
+* **Bought chassis instead**: set `BASE = "bought"` and `CH_*` to its size, and
+  drill the deck to match the lower body floor slots.
 * **Matrix modules**: the face carrier is for 32 x 32 mm (FC-16 style) modules.
   The older 50 x 32 mm boards with the chip below the LEDs won't fit; tell us
   and the carrier can be redrawn with the top row flipped.

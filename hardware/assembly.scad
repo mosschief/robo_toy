@@ -23,6 +23,9 @@ FACE16 = [
     "..###......###..", "...##########...", ".....######.....", "................"];
 
 module chassis() {
+    if (BASE == "printed") base_assy(); else bought_chassis();
+}
+module bought_chassis() {
     for (s = [-1, 1]) translate([s * (CH_W / 2 - TR_W / 2), 0, -24]) rotate([0, 0, 90]) track(CH_L, CH_H - 4, TR_W);
     color([0.8, 0.82, 0.85]) translate([-(CH_W / 2 - TR_W - 2), -CH_L / 2 + 18, -3]) cube([CH_W - 2 * TR_W - 4, CH_L - 36, 3]);
 }
@@ -100,3 +103,5 @@ module tank() {
 }
 
 if (!is_undef(SHOW_TANK) ? SHOW_TANK : true) tank();
+SHOW_BASE = false;
+if (SHOW_BASE) base_assy();

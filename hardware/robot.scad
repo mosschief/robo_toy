@@ -1,7 +1,7 @@
 // Tank robot: printable parts.
 // Render one part:  openscad -D 'part="torso"' -o torso.stl robot.scad
 // Parts list: see PARTS below or hardware/export.sh.
-include <lib.scad>
+include <base.scad>
 
 part = "none";
 
@@ -57,7 +57,7 @@ module lower_body() {
             }}
         }
         // chassis mounting slots + motor wire hole in the floor
-        for (y = [-66, 0, 66], x = [-1, 1]) translate([x * 26, y, -1]) slot(18, M3, WALL + 2);
+        for (p = LB_FLOOR_SCREWS) translate([p[0], p[1], -1]) slot(10, M3, WALL + 2);
         translate([-17, 33, -1]) cube([34, 14, WALL + 2]);
         // waist servo pocket, tab screw pilots, cable slot
         waist_frame() {
@@ -411,7 +411,7 @@ module bumper() {
 // Track fender, right side. Local frame: lower-body side face at x = 0, deck top at z = 0.
 FENDER_LEN = CH_L + 10;
 module fender() {
-    top_z = 10;              // underside of the fender above the deck; check track clearance
+    top_z = 12;              // underside of the fender above the deck; check track clearance
     difference() {
         union() {
             translate([0, -FENDER_LEN / 2, top_z]) rslab([TR_W + 10, FENDER_LEN, 4], 4);
@@ -436,7 +436,8 @@ module antenna() {
 
 // ======================================================================
 PARTS = ["lower_body", "lid", "tray", "waist", "bearing_cap", "clamp_ring", "torso", "chest_guard",
-         "head_front", "head_back", "face_carrier", "arm", "clutch_hub", "bumper", "fender", "antenna"];
+         "head_front", "head_back", "face_carrier", "arm", "clutch_hub", "bumper", "fender", "antenna",
+         "base_frame", "sprocket_half", "sprocket_hub", "wheel_half", "road_wheel_half", "wheel_spacer", "track_link"];
 
 module print_part(p) {
     // each part laid out in a good print orientation
@@ -456,6 +457,13 @@ module print_part(p) {
     if (p == "bumper") rotate([-90, 0, 0]) bumper();
     if (p == "fender") fender();
     if (p == "antenna") antenna();
+    if (p == "base_frame") rotate([180, 0, 0]) base_frame();
+    if (p == "sprocket_half") rotate([0, 90, 0]) translate([-10.5, 0, 0]) sprocket_half();
+    if (p == "sprocket_hub") rotate([0, 90, 0]) translate([14.5, 0, 0]) sprocket_hub();
+    if (p == "wheel_half") rotate([0, -90, 0]) translate([-GROOVE_HW, 0, 0]) wheel_half();
+    if (p == "road_wheel_half") rotate([0, -90, 0]) translate([-GROOVE_HW, 0, 0]) road_wheel_half();
+    if (p == "wheel_spacer") wheel_spacer();
+    if (p == "track_link") rotate([180, 0, 0]) track_link();
 }
 
 if (part != "none") print_part(part);
