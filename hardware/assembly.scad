@@ -6,7 +6,6 @@ use <../concepts/parts.scad>
 SHOW_TANK = true;
 SH = 40;      // shoulder angle, degrees forward from straight down
 EL = 50;      // elbow angle, degrees forward relative to the upper arm
-NECK = 0;     // head turn, degrees
 EXPLODE = 0;  // 0 = assembled, ~1 = exploded view
 
 C_BODY = [1.00, 0.62, 0.10];
@@ -53,8 +52,6 @@ module arm_assy() {
 module torso_assy() {
     color(C_BODY) torso();
     for (s = [-1, 1]) shoulder_frame(s) servo_vitamin();
-    neck_frame() servo_vitamin();
-    color(C_ACC) translate([0, 0, NK_TAB_Z + HUB_FACE + E * 20]) clutch_hub();
     color(C_ACC) translate([0, -TO[1] / 2 - E * 30, 0]) chest_guard();
     color(C_PCB) translate([CAM_X - CAM_PCB[0] / 2, -TO[1] / 2 + WALL + 5.5, CAM_Z + 12.5 - CAM_PCB[1]]) cube([CAM_PCB[0], 1.6, CAM_PCB[1]]);
     color([0.1, 0.1, 0.12]) translate([CAM_X, -TO[1] / 2 + WALL + 5.5, CAM_Z]) rotate([90, 0, 0]) cylinder(d = 8, h = 6);
@@ -86,7 +83,7 @@ module tank() {
     }
     color(C_BODY * 0.95) translate([0, 0, LB[2] + E * 40]) lid();
     translate([0, 0, Z_TORSO + E * 90]) torso_assy();
-    translate([0, 0, Z_HEAD + E * 170]) rotate([0, 0, NECK]) head_assy();
+    translate([0, 0, Z_HEAD + E * 170]) head_assy();
 }
 
 if (!is_undef(SHOW_TANK) ? SHOW_TANK : true) tank();

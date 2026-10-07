@@ -64,8 +64,7 @@ void Robot::turnRight(uint16_t ms, uint8_t speed) { drive(speed, -speed);  wait(
 
 void Robot::arms(int16_t left, int16_t right) { Joints::move(L_SHOULDER, left); Joints::move(R_SHOULDER, right); }
 void Robot::elbows(int16_t left, int16_t right) { Joints::move(L_ELBOW, left); Joints::move(R_ELBOW, right); }
-void Robot::head(int16_t angle) { Joints::move(NECK, angle); }
-void Robot::look(int8_t dir) { Face::look(dir); head(90 + dir * 45); }
+void Robot::look(int8_t dir) { Face::look(dir); }
 
 void Robot::wave() {
   Joints::move(R_SHOULDER, 160);

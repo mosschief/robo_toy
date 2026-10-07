@@ -98,14 +98,14 @@ code { font-family: var(--mono); font-size: .85em; }
         <h3>How it is built</h3>
         <dl class="spec">
           <dt>Lower body</dt><dd>Tub on the chassis deck holding the battery, Nano, motor driver, 5 V converter and charger. A lid on top carries the torso and the mode button.</dd>
-          <dt>Torso</dt><dd>Shoulder and neck servos sit on internal bulkheads. The camera and distance sensor slide into rails behind the chest guard.</dd>
+          <dt>Torso</dt><dd>Shoulder servos sit on internal bulkheads; the head bolts straight onto the top, so Tank turns on its tracks to look around. The camera and distance sensor slide into rails behind the chest guard.</dd>
           <dt>Head</dt><dd>Four 8×8 modules sit face-first in a carrier behind a 2 mm clear window. The back cap unscrews.</dd>
           <dt>Arms</dt><dd>Each upper arm is two halves that clamp the elbow servo. The forearm has a fixed two-finger claw.</dd>
           <dt>Back panel</dt><dd>Power switch, USB-C charging, PROG/RUN switch and Nano USB, all above the bumper.</dd>
         </dl>
         <h3>Why it survives a kid</h3>
         <ul class="pros">
-          <li>All five joints have a spring clutch: a hard yank makes the limb click round instead of stripping the servo gears.</li>
+          <li>All four arm joints have a spring clutch: a hard yank makes the limb click round instead of stripping the servo gears.</li>
           <li>Servos let go after 1.5 s of standing still, so pushing an arm by hand never fights the motor.</li>
           <li>PETG body with 4 walls, TPU bumpers and antenna, and the screens sit behind clear windows.</li>
           <li>Driving stops by itself 12 cm from a wall, and 0.4 s after the phone stops sending.</li>
@@ -118,14 +118,14 @@ code { font-family: var(--mono); font-size: .85em; }
   <section id="phone">
     <h2>Playing with it</h2>
     <div class="concept-body">
-      <div class="shots"><img src="final/phone.png" alt="Phone control page: camera view, distance and battery readout, a round orange joystick, Slow, Light and Bumper toggles, then buttons for faces, sounds, arm poses, modes and a head slider" style="max-width:320px"></div>
+      <div class="shots"><img src="final/phone.png" alt="Phone control page: camera view, distance and battery readout, a round orange joystick, Slow, Light and Bumper toggles, then buttons for faces, sounds, arm poses, and modes" style="max-width:320px"></div>
       <div class="info">
         <p>Join the Wi-Fi network <strong>Tank-XXXX</strong> (password <code>tankrobot</code>) and open <code>192.168.4.1</code>. The page shows the camera with a joystick and buttons for faces, sounds, arm poses and modes. It also shows the distance and battery readings.</p>
         <p>Without a phone, the mode button on the lid switches modes, and the face shows the number:</p>
         <div class="table-wrap"><table style="min-width:0">
           <thead><tr><th>Mode</th><th>What Tank does</th></tr></thead>
           <tbody>
-            <tr><td class="num">1 Play</td><td>looks around, blinks, waves at a hand near its chest</td></tr>
+            <tr><td class="num">1 Play</td><td>turns a little to look around, blinks, waves at a hand near its chest</td></tr>
             <tr><td class="num">2 Explore</td><td>drives on its own and turns away from obstacles</td></tr>
             <tr><td class="num">3 Dance</td><td>dances to a tune</td></tr>
             <tr><td class="num">4 My code</td><td>runs the program your kid writes in <code>my_program.h</code></td></tr>
@@ -139,7 +139,7 @@ code { font-family: var(--mono); font-size: .85em; }
 
   <section id="final-parts">
     <h2>What to buy</h2>
-    <p class="note">You already have the Otto Nano board, 5 servos, the buzzer and the LED modules (you need 4). MG90S metal-gear servos for the arms are recommended.</p>
+    <p class="note">You already have the Otto Nano board, 4 servos, the buzzer and the LED modules (you need 4). MG90S metal-gear servos for the arms are recommended.</p>
     <div class="table-wrap">
       <table>
         <thead><tr><th>Part</th><th>Qty</th><th>Approx. cost</th></tr></thead>

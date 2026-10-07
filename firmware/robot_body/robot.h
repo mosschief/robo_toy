@@ -6,7 +6,8 @@
 //   robot.sound(SND_HAPPY);      SND_BEEP SND_HELLO SND_HAPPY SND_SAD SND_SURPRISE SND_UHOH SND_DANCE
 //   robot.arms(90, 90);          left and right shoulder: 0 down, 90 forward, 180 up
 //   robot.wave();                wave hello with the right arm
-//   robot.look(-1);              look left (-1), ahead (0) or right (1) with eyes and head
+//   robot.look(-1);              look left (-1), ahead (0) or right (1) with the eyes
+//                                (the head is fixed: turn the whole robot to look around)
 //   robot.wait(500);             do nothing for half a second
 //   if (robot.distance() < 200)  something is closer than 20 cm
 #pragma once
@@ -31,7 +32,6 @@ class Robot {
   // body
   void arms(int16_t left, int16_t right);
   void elbows(int16_t left, int16_t right);
-  void head(int16_t angle);              // 90 = ahead
   void look(int8_t dir);
   void wave();
   void armsUp();

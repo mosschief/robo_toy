@@ -1,7 +1,8 @@
 # Building Tank
 
 Tank is a tough, kid-proof Arduino robot: a bought tank chassis, a printed body
-with two 2-joint arms and a turning head, a 16 x 16 LED face, a Wi-Fi camera
+with two 2-joint arms and a head fixed to the body (Tank turns on its tracks
+to look around), a 16 x 16 LED face, a Wi-Fi camera
 in the chest with a laser distance sensor, and a phone control page. It reuses
 the Otto DIY "fat version" electronics (Nano + shield, servos, LED matrix,
 buzzer).
@@ -15,7 +16,7 @@ buzzer).
 | Part | Qty | Notes |
 |---|---|---|
 | Otto Nano board (Nano + I/O shield) | 1 | body controller |
-| Micro servos | 5 | 2 shoulders, 2 elbows, neck. Swap the arm servos for **MG90S** (metal gears, same size) if you can |
+| Micro servos | 4 | 2 shoulders, 2 elbows. Swap the arm servos for **MG90S** (metal gears, same size) if you can |
 | MAX7219 8x8 LED matrix, 32 x 32 mm module | 4 | the face; buy one more if you have 3 |
 | Passive buzzer, 12 mm | 1 | |
 | Dupont cables | ~20 | |
@@ -36,9 +37,9 @@ buzzer).
 | 16 mm momentary panel button | 1 | mode button |
 | Resistors: 10k x 2 (battery sense), 1k + 2k (3.3 V divider) | | |
 | 470 uF 10 V capacitor | 1 | across the ESP32-CAM 5 V input |
-| Compression springs ~8 mm OD x 12 mm, 0.6-0.8 mm wire | 5 | clutches |
+| Compression springs ~8 mm OD x 12 mm, 0.6-0.8 mm wire | 4 | clutches |
 | M3 heat-set inserts (M3 x 5.7) | ~45 | |
-| M3 socket screws 8, 10, 30 mm + washers + 5 nuts | | |
+| M3 socket screws 8, 10, 12, 30 mm + washers + 4 nuts | | |
 | M2 x 6 self-tapping screws | ~25 | servo tabs, horn-to-hub |
 | Clear PETG / polycarbonate sheet, 2 mm | 72 x 72 + 24 x 24 | face window, lens window |
 | Velcro strap 20 mm | 1 | holds the battery |
@@ -64,7 +65,7 @@ in OpenSCAD and set `part`). Ready-made STLs are in `hardware/stl/`.
 | upper_arm_inner | 2 | PETG | **mirror one** in the slicer for the left arm |
 | upper_arm_outer | 2 | PETG | **mirror one** |
 | forearm | 2 | PETG | **mirror one** |
-| clutch_hub | 5 | PETG | ridges up |
+| clutch_hub | 4 | PETG | ridges up |
 | fender | 2 | PETG | **mirror one** |
 | bumper | 2 | TPU | |
 | antenna | 1 | TPU | |
@@ -90,25 +91,25 @@ in OpenSCAD and set `part`). Ready-made STLs are in `hardware/stl/`.
 | D8 / A0 / D6 | TB6612 BIN1 / BIN2 / PWMB (right track) |
 | D9 / D10 | left shoulder / left elbow servo |
 | A1 / A2 | right shoulder / right elbow servo |
-| A3 | neck servo |
+| A3 | free |
 | D11 / D12 / D13 | MAX7219 DIN / CS / CLK (first module of the chain) |
 | A4 / A5 | VL53L0X SDA / SCL |
 | A6 | battery divider |
 
 The four MAX7219 modules chain DOUT -> DIN. The camera and its board live in
-the chest; the face cable goes down through the hole in front of the neck.
+the chest; the face cable goes down through the hole in the head floor into
+the torso.
 
 ## 4. Assembly
 
 1. **Inserts.** Press M3 heat-set inserts into every round boss: lower body
    (6 on the rim, 4 bumper, 6 fender, 4 tray), torso (4 underneath, 4 for the
-   chest guard), head (4 face-carrier, 4 back-cap), upper arm inner halves (3 each).
+   chest guard, 4 on top for the head), head (4 face-carrier, 4 back-cap), upper arm inner halves (3 each).
 2. **Clutch hubs.** Screw each servo's round horn into a hub (2 x M2 from the
    horn side). Slide an M3 nut into the side slot later, after the hub is on the servo.
 3. **Torso.** Fit the shoulder servos from inside so their tabs sit against the
-   bulkheads, shafts out through the side holes; screw the tabs (M2). Fit the
-   neck servo from below, shaft up. Centre every servo (90 deg) before fitting
-   hubs. Press hubs onto the splines, drive the servo's centre screw through the
+   bulkheads, shafts out through the side holes; screw the tabs (M2). Centre
+   every servo (90 deg) before fitting hubs. Press hubs onto the splines, drive the servo's centre screw through the
    hub, then slide in the nuts.
 4. **Chest.** Slide the ESP32-CAM into its rails from below, lens forward;
    slide the VL53L0X into its rails. Put the 24 x 24 clear sheet into the chest
@@ -121,8 +122,8 @@ the chest; the face cable goes down through the hole in front of the neck.
    upper arm on the shoulder hub the same way.
 6. **Head.** Clear 72 x 72 sheet against the inside of the face opening, the
    four matrices face-first into the carrier, carrier screwed on (4 x M3 x 10).
-   Lower the head onto the neck hub and fix it with the spring screw through the
-   centre of the head floor. Push the TPU antenna into the top. Close the back cap.
+   Feed the face cable down through the floor hole, set the head on the torso
+   and screw it down from inside (4 x M3 x 12 through the floor bosses). Push the TPU antenna into the top. Close the back cap.
 7. **Lower body.** Tray on its standoffs, boards on the tray (nylon standoffs or
    zip ties), battery in its cradle with the strap, switches and charge port in
    the back, buzzer in its holder behind the grille, mode button in the lid.
@@ -164,7 +165,7 @@ listed at the top of `robot.h`. Press the mode button until the face shows 4.
 
 | Mode | Face shows | What Tank does |
 |---|---|---|
-| Play | 1 | looks around, blinks, waves at a hand held near its chest |
+| Play | 1 | turns a little to look around, blinks, waves at a hand held near its chest |
 | Explore | 2 | drives on its own, backs off and turns away from obstacles |
 | Dance | 3 | dances to a tune |
 | My code | 4 | runs `myProgram()` once |
@@ -173,7 +174,7 @@ listed at the top of `robot.h`. Press the mode button until the face shows 4.
 
 The phone page has a joystick, Slow/Fast, a Light (the camera board's LED),
 Bumper (the stop-before-a-wall guard, on by default), faces, sounds, arm poses,
-modes and a head slider. When the phone stops sending, the tracks stop within
+and modes. When the phone stops sending, the tracks stop within
 0.4 s.
 
 ## Safety

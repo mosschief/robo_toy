@@ -32,8 +32,8 @@ void move(Joint j, int16_t a) {
   target[j] = constrain(a, JOINTS[j].minAngle, JOINTS[j].maxAngle);
 }
 
-void moveAll(int16_t ls, int16_t le, int16_t rs, int16_t re, int16_t neck) {
-  move(L_SHOULDER, ls); move(L_ELBOW, le); move(R_SHOULDER, rs); move(R_ELBOW, re); move(NECK, neck);
+void moveAll(int16_t ls, int16_t le, int16_t rs, int16_t re) {
+  move(L_SHOULDER, ls); move(L_ELBOW, le); move(R_SHOULDER, rs); move(R_ELBOW, re);
 }
 
 void rest() { for (uint8_t j = 0; j < JOINT_COUNT; j++) move((Joint)j, JOINTS[j].restAngle); }

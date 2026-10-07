@@ -32,7 +32,7 @@ HORN_D    = 21.0;
 HORN_T    = 2.0;
 HORN_HOLE_R = 7.5;  // radius of the screw holes used to fix horn to the clutch hub
 
-// ---------- breakaway clutch (one design, used at all 5 joints) ----------
+// ---------- breakaway clutch (one design, used at all 4 arm joints) ----------
 // Horn hub (on the servo) has radial V ridges; the limb has matching grooves.
 // An M3 screw + compression spring (8 mm OD, ~12 mm long) presses them together.
 // A hard yank makes the limb click round instead of stripping servo gears.

@@ -104,18 +104,17 @@ module tray() {
 }
 
 // ======================================================================
-// TORSO: shoulder servos, neck servo, ESP32-CAM + VL53L0X in the chest.
+// TORSO: shoulder servos, ESP32-CAM + VL53L0X in the chest. The head bolts on top.
 // Local frame: centred in X/Y, bottom (on the lid) at z = 0.
 // ======================================================================
 SH_TAB_X = TO[0] / 2 + 1 - LIMB_FACE;            // shoulder servo tab plane
-NK_TAB_Z = TO[2] + NECK_GAP - LIMB_FACE;         // neck servo tab plane
-NECK_WELL = 40;
+HEAD_BOLT = [for (x = [-1, 1], y = [-1, 1]) [x * 22, y * 22]];   // head-to-torso screws
+HEAD_CABLE = [0, -17];                           // face cable hole, torso top + head floor
 GUARD_BOSS = [for (x = [-1, 1], z = [14, 46]) [x * 30, z]];
 
 module shoulder_frame(s) {
     translate([s * SH_TAB_X, SHOULDER_Y, SHOULDER_Z]) rotate([0, s * 90, 0]) rotate([0, 0, 90]) children();
 }
-module neck_frame() { translate([0, 0, NK_TAB_Z]) rotate([0, 0, 90]) children(); }
 
 module torso() {
     W = TO[0]; D = TO[1]; H = TO[2];
@@ -136,9 +135,8 @@ module torso() {
             for (p = TORSO_BOSS) translate([p[0], p[1], 0]) insert_boss(10);
             // shoulder bulkheads
             for (s = [-1, 1]) translate([s > 0 ? SH_TAB_X : -SH_TAB_X - 6, -18, 22]) cube([6, 18 + D / 2 - 1, H - 22 - 1]);
-            // neck bulkhead + two webs up to the top wall
-            translate([-16, -18, NK_TAB_Z]) cube([32, 18 + D / 2 - 1, 6]);
-            for (x = [-11, 8]) translate([x, -18, NK_TAB_Z]) cube([3, 18 + D / 2 - 1, H - NK_TAB_Z - 1]);
+            // head bolt bosses hanging from the top wall (inserts open upward)
+            for (p = HEAD_BOLT) translate([p[0], p[1], H - WALL - 7]) insert_boss(7 + WALL - 0.5);
             // chest guard bosses
             for (p = GUARD_BOSS) translate([p[0], -D / 2 + WALL - 0.5, p[1]]) rotate([-90, 0, 0]) insert_boss(8);
             // ESP32-CAM rails (PCB vertical, lens forward)
@@ -149,11 +147,11 @@ module torso() {
         }
         // servo pockets
         for (s = [-1, 1]) shoulder_frame(s) servo_mount_cut(6);
-        neck_frame() servo_mount_cut(6);
         // clutch wells
         for (s = [-1, 1]) translate([s * (SH_TAB_X + 6 - 0.01), SHOULDER_Y, SHOULDER_Z]) rotate([0, s * 90, 0]) cylinder(d = WELL_D, h = W);
-        translate([0, 0, NK_TAB_Z + 6 - 0.01]) cylinder(d = WELL_D, h = H);
-        translate([0, 0, H - WALL - 1]) cylinder(d = NECK_WELL, h = WALL + 2);
+        // face cable up into the head
+        translate([HEAD_CABLE[0], HEAD_CABLE[1], H - WALL - 1]) cylinder(d = 12, h = WALL + 2);
+        for (p = HEAD_BOLT) translate([p[0], p[1], H + 0.01]) mirror([0, 0, 1]) insert_hole(INS_L + 1);
         // elbow cable slots behind each shoulder
         for (s = [-1, 1]) translate([s * W / 2 - 5, 24, 44]) cube([10, 10, 6]);
         // insert holes
@@ -165,9 +163,8 @@ module torso() {
         // PCB slots in the rails
         translate([CAM_X - CAM_PCB[0] / 2 - 0.3, -D / 2 + WALL + 5.5, 1]) cube([CAM_PCB[0] + 0.6, 2, CAM_Z + 12.6 + 1]);
         translate([TOF_X - TOF_PCB[0] / 2 - 0.3, -D / 2 + WALL + 0.4, TOF_Z - 15]) cube([TOF_PCB[0] + 0.6, 2, 31]);
-        // keep the shoulder/neck servo bodies clear of the rails and webs
+        // keep the shoulder servo bodies clear of the rails and webs
         for (s = [-1, 1]) shoulder_frame(s) translate([SV_SHAFT - SV_TAB_L / 2 - 1, -SV_W / 2 - 1, -40]) cube([SV_TAB_L + 2, SV_W + 2, 40]);
-        neck_frame() translate([SV_SHAFT - SV_TAB_L / 2 - 1, -SV_W / 2 - 1, -40]) cube([SV_TAB_L + 2, SV_W + 2, 40]);
     }
 }
 
@@ -188,7 +185,8 @@ module chest_guard() {
 }
 
 // ======================================================================
-// HEAD: 16x16 face behind a clear window, sits on the neck clutch.
+// HEAD: 16x16 face behind a clear window, bolted to the top of the torso
+// (4 x M3 x 12 down through the head floor; reach them with the back cap off).
 // Local frame: centred in X/Y, bottom at z = 0, front faces -Y.
 // Printed in two pieces: front shell and back cap (split at y = HEAD_SPLIT).
 // ======================================================================
@@ -206,8 +204,8 @@ module head_front() {
     difference() {
         union() {
             difference() { head_solid(); head_void(); }
-            // neck socket boss
-            cylinder(d = CL_D + 6, h = 15);
+            // floor bosses for the head bolts
+            for (p = HEAD_BOLT) translate([p[0], p[1], 0]) cylinder(d = BOSS_D + 1, h = 6);
             // back-cap screw bosses
             for (p = HEAD_CAP_BOSS) translate([p[0], HEAD_SPLIT - 14, p[1]]) rotate([-90, 0, 0]) insert_boss(14);
             // face carrier bosses
@@ -216,10 +214,10 @@ module head_front() {
             translate([28, 8, HD[2] - WALL - 6]) cylinder(d = 14, h = 6.5);
         }
         translate([-HD[0], HEAD_SPLIT, -1]) cube([2 * HD[0], HD[1], HD[2] + 2]);
-        // neck clutch socket (grooves face down, spring pocket opens inside)
-        translate([0, 0, 0]) limb_socket_cut(15, 4);
-        // face cable down into the torso, just in front of the clutch
-        translate([0, -17, -1]) cylinder(d = 9, h = 20);
+        // head bolts
+        for (p = HEAD_BOLT) translate([p[0], p[1], -1]) cylinder(d = M3, h = 10);
+        // face cable down into the torso
+        translate([HEAD_CABLE[0], HEAD_CABLE[1], -1]) cylinder(d = 9, h = WALL + 2);
         // face opening
         translate([-FACE_WIN / 2, -HD[1] / 2 - 1, FACE_Z - FACE_WIN / 2]) cube([FACE_WIN, WALL + 2, FACE_WIN]);
         // insert holes

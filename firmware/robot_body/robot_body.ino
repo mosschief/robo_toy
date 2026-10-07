@@ -34,7 +34,7 @@ bool pendingShort = false, pendingLong = false;   // button presses seen while b
 
 // ---------------- serial link to the ESP32-CAM ----------------
 // Lines of text, for example "D 50 -50" (drive), "F 1" (face), "S 2" (sound),
-// "J 4 120" (joint 4 to 120 degrees), "P 1" (pose), "M 1" (mode), "G 0" (guard off).
+// "J 3 120" (joint 3 to 120 degrees), "P 1" (pose), "M 1" (mode), "G 0" (guard off).
 char line[32];
 uint8_t lineLen = 0;
 
@@ -138,6 +138,9 @@ void playMode() {
     nextIdleMove = t + random(3000, 8000);
     int8_t dir = random(-1, 2);
     robot.look(dir);
+    // the head is part of the body, so turn a little on the tracks to look
+    if (dir < 0) robot.turnLeft(250, 40);
+    if (dir > 0) robot.turnRight(250, 40);
     if (random(4) == 0) robot.arms(random(40, 120), random(40, 120));
     else robot.arms(JOINTS[L_SHOULDER].restAngle, JOINTS[R_SHOULDER].restAngle);
   }
@@ -169,8 +172,8 @@ void danceMode() {
   robot.face(HAPPY);
   robot.sound(SND_DANCE);
   for (uint8_t i = 0; i < 2 && !robot.cancelled; i++) {
-    robot.arms(170, 40); robot.head(60);  robot.wait(450);
-    robot.arms(40, 170); robot.head(120); robot.wait(450);
+    robot.arms(170, 40); robot.look(-1); robot.wait(450);
+    robot.arms(40, 170); robot.look(1);  robot.wait(450);
   }
   robot.face(SILLY);
   robot.turnLeft(600, 60);
@@ -179,7 +182,7 @@ void danceMode() {
   robot.turnRight(600, 60);
   robot.hug(); robot.wait(500);
   robot.face(LOVE);
-  robot.rest(); robot.head(90);
+  robot.rest(); robot.look(0);
   robot.wait(1200);
 }
 
